@@ -46,7 +46,6 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'mi
     // Medicines
     Route::delete('medicines/destroy', 'MedicineController@massDestroy')->name('medicines.massDestroy');
     Route::resource('medicines', 'MedicineController');
-    Route::resource('medicines', 'Admin\MedicineController');
 
         // Schedules
         Route::prefix('schedules')->name('schedules.')->group(function () {

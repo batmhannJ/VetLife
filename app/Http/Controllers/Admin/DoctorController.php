@@ -7,7 +7,7 @@ use App\Http\Controllers\Traits\MediaUploadingTrait;
 use App\Http\Requests\MassDestroyDoctorRequest;
 use App\Http\Requests\StoreDoctorRequest;
 use App\Http\Requests\UpdateDoctorRequest;
-use App\Doctor;
+use App\Models\Doctor; // ✅ Correct this line
 use Gate;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -20,7 +20,7 @@ class DoctorController extends Controller
     {
         //abort_if(Gate::denies('doctor_access'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
-        //$doctors = Doctor::all();
+        $doctors = Doctor::all();
 
         return view('admin.doctors.index', compact('doctors'));
     }
