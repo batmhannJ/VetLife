@@ -46,10 +46,16 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'mi
     // Medicines
     Route::delete('medicines/destroy', 'MedicineController@massDestroy')->name('medicines.massDestroy');
     Route::resource('medicines', 'MedicineController');
+    Route::resource('medicines', 'Admin\MedicineController');
 
         // Schedules
-    Route::delete('schedules/destroy', 'ScheduleController@massDestroy')->name('schedules.massDestroy');
-    Route::resource('schedules', 'ScheduleController');
+        Route::prefix('schedules')->name('schedules.')->group(function () {
+            Route::get('settings', 'Admin\ScheduleController@settings')->name('settings');
+            Route::post('settings', 'Admin\ScheduleController@saveSettings')->name('saveSettings');
+            Route::get('/', 'Admin\ScheduleController@index')->name('index');
+            Route::get('create', 'Admin\ScheduleController@create')->name('create');
+            Route::post('/', 'Admin\ScheduleController@store')->name('store');
+        });
 
     // Reports
     Route::delete('reports/destroy', 'ReportController@massDestroy')->name('reports.massDestroy');
@@ -58,6 +64,25 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'mi
     //Doctors
     Route::resource('doctors', 'DoctorController');
     Route::post('doctors/media', 'DoctorController@storeMedia')->name('doctors.storeMedia');
+
+    //Request
+    Route::get('appointments', 'AppointmentController@index')->name('appointments.index');
+    Route::get('appointments/requests', 'AppointmentController@requests')->name('appointments.requests');
+
+    //Payments
+    Route::get('payments', 'PaymentController@index')->name('payments.index');
+    Route::get('payments/setup', 'PaymentController@setup')->name('payments.setup');
+
+    //Gateway
+    Route::get('gateway', 'GatewayController@index')->name('gateway.index');
+    Route::get('gateway/setup', 'GatewayController@setup')->name('gwateway.setup');
+
+    //Categories
+    Route::resource('categories', 'Admin\CategoryController');
+
+    //Service
+    Route::resource('services', 'Admin\ServiceController');
+
 });
 
 // User/Patient routes (new addition)

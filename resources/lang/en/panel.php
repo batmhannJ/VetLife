@@ -1,5 +1,5 @@
 <?php
 
 return [
-    'site_title' => 'state House clinic',
+    'site_title' => 'CLSU VetLife',
 ];
