@@ -24,6 +24,7 @@ class Appointment extends Model
         'address',
         'ailment',
         'appointment_date',
+        'appointment_time',
         'status',
         'doctor_id',
         'notes'

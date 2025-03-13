@@ -41,20 +41,23 @@ class AppointmentController extends Controller
      * @return \Illuminate\Http\RedirectResponse
      */
     public function store(Request $request)
-    {
-        $request->validate([
-            'fullname' => 'required|string|max:255',
-            'email' => 'required|email',
-            'contact' => 'required|string|max:20',
-            'gender' => 'required|in:Male,Female',
-            'dob' => 'required|date',
-            'address' => 'required|string|max:255',
-            'ailment' => 'required|string|max:255',
-            'appointment_date' => 'required|date|after:today',    
-            'appointment_time' => 'required|date_format:H:i', // Validate time
-            'status' => 'required|string|max:255',
-            ]);
+{
+    \Log::info('Received appointment time: ' . $request->appointment_time);
 
+    $request->validate([
+        'fullname' => 'required|string|max:255',
+        'email' => 'required|email',
+        'contact' => 'required|string|max:20',
+        'gender' => 'required|in:Male,Female',
+        'dob' => 'required|date',
+        'address' => 'required|string|max:255',
+        'ailment' => 'required|string|max:255',
+        'appointment_date' => 'required|date|after:today',    
+        'appointment_time' => 'required', // Validate time
+        'status' => 'required|string|max:255',
+    ]);
+
+    try {
         $appointment = Appointment::create([
             'user_id' => Auth::id(),
             'fullname' => $request->fullname,
@@ -68,10 +71,29 @@ class AppointmentController extends Controller
             'appointment_time' => $request->appointment_time,
             'status' => 'Pending',
         ]);
+          // Debug the appointment object before saving
+          \Log::info('Appointment before save:', $appointment->toArray());
+        
+          $appointment->save();
+          
+          // Debug the saved appointment
+          \Log::info('Saved appointment:', Appointment::find($appointment->id)->toArray());
+  
 
-        return redirect()->route('patient.appointments.index')
-            ->with('success', 'Appointment created successfully.');
+        if ($request->ajax()) {
+            return response()->json(['success' => true]);
+        } else {
+            return redirect()->route('patient.appointments.index')
+                ->with('success', 'Appointment created successfully.');
+        }
+    } catch (\Exception $e) {
+        if ($request->ajax()) {
+            return response()->json(['success' => false, 'message' => $e->getMessage()]);
+        } else {
+            return redirect()->back()->with('error', 'Error creating appointment: ' . $e->getMessage());
+        }
     }
+}
 
     /**
      * Display the specified appointment.
@@ -108,6 +130,7 @@ class AppointmentController extends Controller
     
         return redirect()->route('patient.appointments.index')->with('success', 'Appointment deleted successfully.');
     }
+    
     public function getAppointmentCounts()
     {
         // Get the current month start and end dates

@@ -43,7 +43,7 @@
                             @foreach($appointments as $appointment)
                                 <tr>
                                     <td>{{ \Carbon\Carbon::parse($appointment->appointment_date)->format('M d, Y') }}</td>
-                                    <td>{{ \Carbon\Carbon::parse($appointment->appointment_date)->format('h:i A') }}</td>
+                                    <td>{{ \Carbon\Carbon::parse($appointment->appointment_time)->format('h:i A') }}</td>
                                     <td>{{ $appointment->ailment }}</td>
                                     <td>
                                         @if($appointment->status == 'Pending')

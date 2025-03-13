@@ -276,51 +276,49 @@ document.addEventListener('DOMContentLoaded', function() {
         if (timeField && !timeField.value) {
             timeField.value = '08:00'; // Default to 8:00 AM
         }
-        
-        // Form submission handler
-        appointmentForm.addEventListener('submit', function(event) {
-            event.preventDefault(); // Prevent default form submission
-            
-            // Get selected time
-            const selectedTime = document.querySelector('input[name="appointment_time"]').value;
-            console.log('Submitting appointment with time:', selectedTime);
-            
-            // Get form data
-            const formData = new FormData(this);
-            
-            // Submit the form via AJAX
-            fetch(this.action, {
-                method: 'POST',
-                body: formData
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    // Update local data
-                    const appointmentDate = document.getElementById('appointmentDate').value;
-                    if (appointmentData[appointmentDate]) {
-                        appointmentData[appointmentDate]++;
-                    } else {
-                        appointmentData[appointmentDate] = 1;
-                    }
-                    
-                    // Refresh the calendar
-                    renderCalendar();
-                    
-                    // Also fetch from server to ensure data is in sync
-                    setTimeout(fetchAppointmentCounts, 500);
-                    
-                    alert('Appointment created successfully!');
-                    appointmentForm.reset(); // Reset the form
-                } else {
-                    alert('Failed to create appointment.');
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                alert('An error occurred while submitting the form.');
-            });
-        });
+// Modify the form submission handler in dashboard.blade.php
+appointmentForm.addEventListener('submit', function(event) {
+    event.preventDefault(); // Prevent default form submission
+    
+    // Get selected time and explicitly log it for debugging
+    const timeField = document.querySelector('input[name="appointment_time"]');
+    const selectedTime = timeField.value;
+    console.log('Selected time before submission:', selectedTime);
+    
+    // Create FormData object
+    const formData = new FormData(this);
+    
+    // Double-check what's in formData
+    console.log('FormData appointment_time:', formData.get('appointment_time'));
+    
+    // Submit the form via AJAX with explicit Content-Type
+    fetch(this.action, {
+        method: 'POST',
+        body: formData,
+        headers: {
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content'),
+            // Don't set Content-Type for FormData - browser will set it with boundary
+        }
+    })
+    .then(response => {
+        console.log('Response status:', response.status);
+        return response.json();
+    })
+    .then(data => {
+        console.log('Response data:', data);
+        if (data.success) {
+            // Update UI logic here
+            alert('Appointment created successfully!');
+            // Don't reset form yet - for debugging purposes
+        } else {
+            alert('Failed to create appointment: ' + (data.message || 'Unknown error'));
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('An error occurred while submitting the form.');
+    });
+});
     }
 });
 </script>

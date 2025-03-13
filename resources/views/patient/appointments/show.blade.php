@@ -15,7 +15,7 @@
                         <div class="row">
                             <div class="col-md-6">
                                 <p><strong>Date:</strong> {{ \Carbon\Carbon::parse($appointment->appointment_date)->format('M d, Y') }}</p>
-                                <p><strong>Time:</strong> {{ \Carbon\Carbon::parse($appointment->appointment_date)->format('h:i A') }}</p>
+                                <p><strong>Time:</strong> {{ \Carbon\Carbon::parse($appointment->appointment_time)->format('h:i A') }}</p>
                                 <p><strong>Ailment:</strong> {{ $appointment->ailment }}</p>
                                 <p><strong>Status:</strong> 
                                     @if($appointment->status == 'Pending')
