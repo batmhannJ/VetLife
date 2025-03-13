@@ -47,14 +47,14 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'mi
     Route::delete('medicines/destroy', 'MedicineController@massDestroy')->name('medicines.massDestroy');
     Route::resource('medicines', 'MedicineController');
 
-        // Schedules
-        Route::prefix('schedules')->name('schedules.')->group(function () {
-            Route::get('settings', 'Admin\ScheduleController@settings')->name('settings');
-            Route::post('settings', 'Admin\ScheduleController@saveSettings')->name('saveSettings');
-            Route::get('/', 'Admin\ScheduleController@index')->name('index');
-            Route::get('create', 'Admin\ScheduleController@create')->name('create');
-            Route::post('/', 'Admin\ScheduleController@store')->name('store');
-        });
+   // Schedules
+    Route::prefix('schedules')->name('schedules.')->group(function () {
+        Route::get('settings', 'ScheduleController@settings')->name('settings');
+        Route::post('settings', 'ScheduleController@saveSettings')->name('settings.update');
+        Route::get('/', 'ScheduleController@index')->name('index');
+        Route::get('create', 'ScheduleController@create')->name('create');
+        Route::post('/', 'ScheduleController@store')->name('store');
+    });
 
     // Reports
     Route::delete('reports/destroy', 'ReportController@massDestroy')->name('reports.massDestroy');
@@ -77,10 +77,12 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'mi
     Route::get('gateway/setup', 'GatewayController@setup')->name('gwateway.setup');
 
     //Categories
-    Route::resource('categories', 'Admin\CategoryController');
-
+    
+    Route::get('/categories', 'App\Http\Controllers\Admin\CategoryController@index');
+    Route::resource('categories', 'CategoryController');
     //Service
-    Route::resource('services', 'Admin\ServiceController');
+    Route::get('/services', 'App\Http\Controllers\Admin\ServiceController@index');
+    Route::resource('services', 'ServiceController');
 
 });
 

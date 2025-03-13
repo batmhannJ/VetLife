@@ -47,18 +47,20 @@ class ScheduleController extends Controller
      */
     public function settings()
     {
+        // Your schedule settings logic here
         return view('admin.schedules.settings');
     }
     public function saveSettings(Request $request)
-{
-    // Validate and save settings logic here
-    $validated = $request->validate([
-        'setting1' => 'required|string|max:255',
-        // Add other validation rules
-    ]);
-    
-    // Save settings to database or configuration
-    
-    return redirect()->route('admin.schedules.settings')->with('success', 'Settings saved successfully');
-}
+    {
+        // Validate and save settings logic here
+        $validated = $request->validate([
+            'setting1' => 'required|string|max:255',
+            // Add other validation rules
+        ]);
+        
+        // Save settings to database or configuration
+        
+        return redirect()->route('admin.schedules.settings')->with('success', 'Settings saved successfully');
+    }
+
 }
