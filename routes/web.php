@@ -94,11 +94,13 @@ Route::group(['prefix' => 'patient', 'as' => 'patient.', 'namespace' => 'Patient
     Route::get('/profile/edit', [App\Http\Controllers\Patient\ProfileController::class, 'edit'])->name('profile.edit');
     Route::put('/profile/update', [App\Http\Controllers\Patient\ProfileController::class, 'update'])->name('profile.update');
     Route::get('/appointments', 'AppointmentController@index')->name('appointments.index');
+    Route::get('/appointments/{appointment}', [AppointmentController::class, 'show'])->name('appointments.show');
     Route::get('/appointments/create', 'AppointmentController@create')->name('appointments.create');
     Route::post('/appointments', 'AppointmentController@store')->name('appointments.store');
+    Route::get('/appointments/counts', [AppointmentController::class, 'getAppointmentCounts'])->name('appointments.counts');
+    Route::delete('/appointments/{appointment}', [AppointmentController::class, 'destroy'])->name('appointments.destroy');
     Route::get('/prescriptions', 'PrescriptionController@index')->name('prescriptions.index');
     Route::get('/test-results', 'TestResultController@index')->name('test-results.index');
-    Route::get('/appointments', 'AppointmentController@index')->name('appointments.index');
     Route::post('/appointments', [AppointmentController::class, 'store'])->name('appointments.store');
     Route::get('/patient/dashboard', [PatientController::class, 'dashboard'])->name('patient.dashboard');
     Route::get('/patient/services', [App\Http\Controllers\Patient\PrescriptionController::class, 'index'])->name('patient.services.index');

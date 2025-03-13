@@ -50,8 +50,10 @@ class AppointmentController extends Controller
             'dob' => 'required|date',
             'address' => 'required|string|max:255',
             'ailment' => 'required|string|max:255',
-            'appointment_date' => 'required|date|after:today',
-        ]);
+            'appointment_date' => 'required|date|after:today',    
+            'appointment_time' => 'required|date_format:H:i', // Validate time
+            'status' => 'required|string|max:255',
+            ]);
 
         $appointment = Appointment::create([
             'user_id' => Auth::id(),
@@ -63,6 +65,7 @@ class AppointmentController extends Controller
             'address' => $request->address,
             'ailment' => $request->ailment,
             'appointment_date' => $request->appointment_date,
+            'appointment_time' => $request->appointment_time,
             'status' => 'Pending',
         ]);
 
@@ -78,13 +81,12 @@ class AppointmentController extends Controller
      */
     public function show($id)
     {
-        $appointment = Appointment::findOrFail($id);
-        
-        // Check if the appointment belongs to the authenticated user
-        if ($appointment->user_id !== Auth::id()) {
-            abort(403, 'Unauthorized action.');
+        $appointment = Appointment::find($id);
+
+        if (!$appointment) {
+            return redirect()->route('patient.appointments.index')->with('error', 'Appointment not found.');
         }
-        
+
         return view('patient.appointments.show', compact('appointment'));
     }
 
@@ -96,18 +98,35 @@ class AppointmentController extends Controller
      */
     public function destroy($id)
     {
-        $appointment = Appointment::findOrFail($id);
-        
-        // Check if the appointment belongs to the authenticated user
-        if ($appointment->user_id !== Auth::id()) {
-            abort(403, 'Unauthorized action.');
+        $appointment = Appointment::find($id);
+    
+        if (!$appointment) {
+            return redirect()->route('patient.appointments.index')->with('error', 'Appointment not found.');
         }
-        
-        // Instead of deleting, we can mark it as canceled
-        $appointment->status = 'Cancelled';
-        $appointment->save();
-        
-        return redirect()->route('patient.appointments.index')
-            ->with('success', 'Appointment cancelled successfully.');
+    
+        $appointment->delete();
+    
+        return redirect()->route('patient.appointments.index')->with('success', 'Appointment deleted successfully.');
+    }
+    public function getAppointmentCounts()
+    {
+        // Get the current month start and end dates
+        $startDate = now()->startOfMonth()->subMonth();
+        $endDate = now()->endOfMonth()->addMonth();
+
+        // Query appointments grouped by date
+        $appointments = DB::table('appointments')
+            ->select(DB::raw('DATE(appointment_date) as date'), DB::raw('COUNT(*) as count'))
+            ->whereBetween('appointment_date', [$startDate, $endDate])
+            ->groupBy(DB::raw('DATE(appointment_date)'))
+            ->get();
+
+        // Format the results as a keyed array
+        $results = [];
+        foreach ($appointments as $appointment) {
+            $results[$appointment->date] = $appointment->count;
+        }
+
+        return response()->json($results);
     }
 }
