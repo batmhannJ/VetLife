@@ -14,7 +14,7 @@
                     <a href="{{ route('admin.home') }}" class="nav-link">
                         <p>
                             <i class="fas fa-fw fa-tachometer-alt"></i>
-                            <span>DASHBOARD</span>
+                            <span>Dashboard</span>
                         </p>
                     </a>
                 </li>
@@ -24,11 +24,11 @@
                     <a class="nav-link nav-dropdown-toggle" href="#">
                         <i class="fa-fw fas fa-user-md"></i>
                         <p>
-                            <span>DOCTOR</span>
+                            <span>Doctor</span>
                             <i class="right fa fa-fw fa-angle-left"></i>
                         </p>
                     </a>
-                    <ul class="nav nav-treeview">
+                    <ul class="nav nav-treeview" style="padding-left: 20px; margin-left: 10px; border-left: 1px solid rgba(255,255,255,0.1);">
                         <li class="nav-item">
                             <a href="{{ route('admin.doctors.create') }}" class="nav-link">
                                 <i class="fa-fw fas fa-plus"></i>
@@ -49,11 +49,11 @@
                     <a class="nav-link nav-dropdown-toggle" href="#">
                         <i class="fa-fw fas fa-user-alt"></i>
                         <p>
-                            <span>PATIENT</span>
+                            <span>Patient</span>
                             <i class="right fa fa-fw fa-angle-left"></i>
                         </p>
                     </a>
-                    <ul class="nav nav-treeview">
+                    <ul class="nav nav-treeview" style="padding-left: 20px; margin-left: 10px; border-left: 1px solid rgba(255,255,255,0.1);">
                         <li class="nav-item">
                             <a href="{{ route('admin.patients.create') }}" class="nav-link">
                                 <i class="fa-fw fas fa-plus"></i>
@@ -74,15 +74,15 @@
                     <a class="nav-link nav-dropdown-toggle" href="#">
                         <i class="fa-fw fas fa-calendar-check"></i>
                         <p>
-                            <span>APPOINTMENT</span>
+                            <span>Appointment</span>
                             <i class="right fa fa-fw fa-angle-left"></i>
                         </p>
                     </a>
-                    <ul class="nav nav-treeview">
+                    <ul class="nav nav-treeview" style="padding-left: 20px; margin-left: 10px; border-left: 1px solid rgba(255,255,255,0.1);">
                         <li class="nav-item">
                             <a href="{{ route('admin.appointments.requests') }}" class="nav-link">
                                 <i class="fa-fw fas fa-clock"></i>
-                                <p>Appointment Request Side</p>
+                                <p>Appointment Request</p>
                             </a>
                         </li>
                     </ul>
@@ -92,7 +92,7 @@
                 <li class="nav-item">
                     <a href="{{ route('admin.prescriptions.index') }}" class="nav-link">
                         <i class="fa-fw fas fa-file-prescription"></i>
-                        <p>PRESCRIPTION</p>
+                        <p>Prescription</p>
                     </a>
                 </li>
 
@@ -101,11 +101,11 @@
                     <a class="nav-link nav-dropdown-toggle" href="#">
                         <i class="fa-fw fas fa-money-bill"></i>
                         <p>
-                            <span>PAYMENT</span>
+                            <span>Payment</span>
                             <i class="right fa fa-fw fa-angle-left"></i>
                         </p>
                     </a>
-                    <ul class="nav nav-treeview">
+                    <ul class="nav nav-treeview" style="padding-left: 20px; margin-left: 10px; border-left: 1px solid rgba(255,255,255,0.1);">
                         <li class="nav-item">
                             <a href="{{ route('admin.payments.setup') }}" class="nav-link">
                                 <i class="fa-fw fas fa-cog"></i>
@@ -126,11 +126,11 @@
                     <a class="nav-link nav-dropdown-toggle" href="#">
                         <i class="fa-fw fas fa-database"></i>
                         <p>
-                            <span>SETUP DATA</span>
+                            <span>Setup Data</span>
                             <i class="right fa fa-fw fa-angle-left"></i>
                         </p>
                     </a>
-                    <ul class="nav nav-treeview">
+                    <ul class="nav nav-treeview" style="padding-left: 20px; margin-left: 10px; border-left: 1px solid rgba(255,255,255,0.1);">
                         <li class="nav-item">
                             <a href="{{ route('admin.medicines.create') }}" class="nav-link">
                                 <i class="fa-fw fas fa-plus"></i>
@@ -150,7 +150,7 @@
                 <li class="nav-item">
                     <a href="{{ route('admin.gateway.index') }}" class="nav-link">
                         <i class="fa-fw fas fa-network-wired"></i>
-                        <p>GATEWAY SIDE</p>
+                        <p>Gateway Side</p>
                     </a>
                 </li>
 
@@ -159,11 +159,11 @@
                     <a class="nav-link nav-dropdown-toggle" href="#">
                         <i class="fa-fw fas fa-calendar-alt"></i>
                         <p>
-                            <span>SCHEDULE</span>
+                            <span>Schedule</span>
                             <i class="right fa fa-fw fa-angle-left"></i>
                         </p>
                     </a>
-                    <ul class="nav nav-treeview">
+                    <ul class="nav nav-treeview" style="padding-left: 20px; margin-left: 10px; border-left: 1px solid rgba(255,255,255,0.1);">
                         <li class="nav-item">
                             <a href="{{ route('admin.schedules.settings') }}" class="nav-link">
                                 <i class="fa-fw fas fa-cog"></i>
@@ -177,7 +177,7 @@
                 <li class="nav-item">
                     <a href="{{ route('admin.categories.index') }}" class="nav-link">
                         <i class="fa-fw fas fa-th-list"></i>
-                        <p>CATEGORY</p>
+                        <p>Category</p>
                     </a>
                 </li>
 
@@ -185,7 +185,7 @@
                 <li class="nav-item">
                     <a href="{{ route('admin.services.index') }}" class="nav-link">
                         <i class="fa-fw fas fa-concierge-bell"></i>
-                        <p>SERVICE LIST</p>
+                        <p>Service List</p>
                     </a>
                 </li>
 

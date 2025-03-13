@@ -33,15 +33,32 @@ class PatientController extends Controller
     }
 
     public function store(StorePatientRequest $request)
-    {
-        $patient = Patient::create($request->all());
+{
+    // Create patient with validated data
+    $patient = Patient::create([
+        'last_name' => $request->input('last_name'),
+        'first_name' => $request->input('first_name'),
+        'gender' => $request->input('gender'),
+        'dob' => $request->input('dob'),
+        'email' => $request->input('email'),
+        'phone' => $request->input('phone'),
+        'address' => $request->input('address'),
+        'pin_code' => $request->input('pin_code'),
+        'blood_group' => $request->input('blood_group'),
+        'emergency_contact_name' => $request->input('emergency_contact_name'),
+        'emergency_contact_relationship' => $request->input('emergency_contact_relationship'),
+        'emergency_contact_phone' => $request->input('emergency_contact_phone'),
+        'emergency_contact_address' => $request->input('emergency_contact_address'),
+    ]);
 
-        if ($request->input('photo', false)) {
-            $patient->addMedia(storage_path('tmp/uploads/' . $request->input('photo')))->toMediaCollection('photo');
-        }
-
-        return redirect()->route('admin.patients.index');
+    // Handle photo upload
+    if ($request->input('photo', false)) {
+        $patient->addMedia(storage_path('tmp/uploads/' . $request->input('photo')))
+               ->toMediaCollection('photo');
     }
+
+    return redirect()->route('admin.patients.index')->with('message', 'Patient created successfully');
+}
 
     public function edit(Patient $patient)
     {

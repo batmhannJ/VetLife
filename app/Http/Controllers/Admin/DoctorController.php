@@ -3,106 +3,139 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Http\Controllers\Traits\MediaUploadingTrait;
-use App\Http\Requests\MassDestroyDoctorRequest;
-use App\Http\Requests\StoreDoctorRequest;
-use App\Http\Requests\UpdateDoctorRequest;
-use App\Models\Doctor; // ✅ Correct this line
-use Gate;
+use App\Models\Doctor;
 use Illuminate\Http\Request;
-use Symfony\Component\HttpFoundation\Response;
+use Spatie\MediaLibrary\MediaCollections\Exceptions\FileDoesNotExist;
+use Spatie\MediaLibrary\MediaCollections\Exceptions\FileIsTooBig;
 
 class DoctorController extends Controller
 {
-    use MediaUploadingTrait;
-
     public function index()
     {
-        //abort_if(Gate::denies('doctor_access'), Response::HTTP_FORBIDDEN, '403 Forbidden');
-
-        $doctors = Doctor::all();
-
+        $doctors = Doctor::latest()->paginate(10);
+        
         return view('admin.doctors.index', compact('doctors'));
     }
-
+    
     public function create()
     {
-        abort_if(Gate::denies('doctor_create'), Response::HTTP_FORBIDDEN, '403 Forbidden');
-
         return view('admin.doctors.create');
     }
-
-    public function store(StoreDoctorRequest $request)
+    
+    public function store(Request $request)
     {
-        $doctor = Doctor::create($request->all());
-
-        if ($request->input('photo', false)) {
-            $doctor->addMedia(storage_path('tmp/uploads/' . $request->input('photo')))->toMediaCollection('photo');
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|max:255|unique:doctors,email',
+            'designation' => 'required|string|max:255',
+            'degree' => 'required|string|max:255',
+            'department' => 'required|string|max:255',
+            'specialist' => 'required|string|max:255',
+            'experience' => 'required|integer|min:0',
+            'service_place' => 'required|string|max:255',
+            'birth_date' => 'required|date',
+            'phone' => 'required|string|max:20',
+            'address' => 'required|string',
+            'photo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+        ]);
+        
+        $doctor = Doctor::create([
+            'name' => $request->name,
+            'email' => $request->email,
+            'designation' => $request->designation,
+            'degree' => $request->degree,
+            'department' => $request->department,
+            'specialist' => $request->specialist,
+            'experience' => $request->experience,
+            'service_place' => $request->service_place,
+            'birth_date' => $request->birth_date,
+            'phone' => $request->phone,
+            'address' => $request->address,
+        ]);
+        
+        if ($request->hasFile('photo')) {
+            try {
+                $doctor->addMediaFromRequest('photo')
+                    ->toMediaCollection('photos');
+            } catch (FileDoesNotExist $e) {
+                return redirect()->back()
+                    ->withErrors(['photo' => 'File does not exist']);
+            } catch (FileIsTooBig $e) {
+                return redirect()->back()
+                    ->withErrors(['photo' => 'File is too big']);
+            }
         }
-
-        return redirect()->route('admin.doctors.index');
+        
+        return redirect()->route('admin.doctors.index')
+            ->with('success', 'Doctor created successfully');
     }
-
+    
     public function edit(Doctor $doctor)
     {
-        abort_if(Gate::denies('doctor_edit'), Response::HTTP_FORBIDDEN, '403 Forbidden');
-
         return view('admin.doctors.edit', compact('doctor'));
     }
-
-    public function update(UpdateDoctorRequest $request, Doctor $doctor)
+    
+    public function update(Request $request, Doctor $doctor)
     {
-        $doctor->update($request->all());
-
-        if ($request->input('photo', false)) {
-            if (!$doctor->photo || $request->input('photo') !== $doctor->photo->file_name) {
-                $doctor->addMedia(storage_path('tmp/uploads/' . $request->input('photo')))->toMediaCollection('photo');
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|max:255|unique:doctors,email,' . $doctor->id,
+            'designation' => 'required|string|max:255',
+            'degree' => 'required|string|max:255',
+            'department' => 'required|string|max:255',
+            'specialist' => 'required|string|max:255',
+            'experience' => 'required|integer|min:0',
+            'service_place' => 'required|string|max:255',
+            'birth_date' => 'required|date',
+            'phone' => 'required|string|max:20',
+            'address' => 'required|string',
+            'photo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+        ]);
+        
+        $doctor->update([
+            'name' => $request->name,
+            'email' => $request->email,
+            'designation' => $request->designation,
+            'degree' => $request->degree,
+            'department' => $request->department,
+            'specialist' => $request->specialist,
+            'experience' => $request->experience,
+            'service_place' => $request->service_place,
+            'birth_date' => $request->birth_date,
+            'phone' => $request->phone,
+            'address' => $request->address,
+        ]);
+        
+        if ($request->hasFile('photo')) {
+            try {
+                // Clear previous photos first
+                $doctor->clearMediaCollection('photos');
+                
+                // Add the new photo
+                $doctor->addMediaFromRequest('photo')
+                    ->toMediaCollection('photos');
+            } catch (FileDoesNotExist $e) {
+                return redirect()->back()
+                    ->withErrors(['photo' => 'File does not exist']);
+            } catch (FileIsTooBig $e) {
+                return redirect()->back()
+                    ->withErrors(['photo' => 'File is too big']);
             }
-        } elseif ($doctor->photo) {
-            $doctor->photo->delete();
         }
-
-        return redirect()->route('admin.doctors.index');
+        
+        return redirect()->route('admin.doctors.index')
+            ->with('success', 'Doctor updated successfully');
     }
-
-    public function show(Doctor $doctor)
-    {
-        abort_if(Gate::denies('doctor_show'), Response::HTTP_FORBIDDEN, '403 Forbidden');
-
-        return view('admin.doctors.show', compact('doctor'));
-    }
-
+    
     public function destroy(Doctor $doctor)
     {
-        abort_if(Gate::denies('doctor_delete'), Response::HTTP_FORBIDDEN, '403 Forbidden');
-
+        // Clear media files
+        $doctor->clearMediaCollection('photos');
+        
+        // Delete the doctor
         $doctor->delete();
-
-        return back();
-    }
-
-    public function massDestroy(MassDestroyDoctorRequest $request)
-    {
-        Doctor::whereIn('id', request('ids'))->delete();
-
-        return response(null, Response::HTTP_NO_CONTENT);
-    }
-    public function storeMedia(Request $request)
-    {
-        // Handle file upload logic here
-        $path = storage_path('tmp/uploads');
-
-        if (!file_exists($path)) {
-            mkdir($path, 0777, true);
-        }
-
-        $file = $request->file('file');
-        $name = uniqid() . '_' . trim($file->getClientOriginalName());
-        $file->move($path, $name);
-
-        return response()->json([
-            'name' => $name,
-            'original_name' => $file->getClientOriginalName(),
-        ]);
+        
+        return redirect()->route('admin.doctors.index')
+            ->with('success', 'Doctor deleted successfully');
     }
 }

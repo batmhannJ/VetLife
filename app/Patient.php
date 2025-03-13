@@ -32,13 +32,6 @@ class Patient extends Model implements HasMedia
         'deleted_at',
     ];
 
-    const JOB_TYPE_SELECT = [
-        'Permanent' => 'Permanent',
-        'Contract'  => 'Contract',
-        'Intern'    => 'Intern',
-        'Volunteer' => 'Volunteer',
-    ];
-
     const BLOOD_GROUP_SELECT = [
         'A+'  => 'A+',
         'A-'  => 'A-',
@@ -51,30 +44,27 @@ class Patient extends Model implements HasMedia
     ];
 
     protected $fillable = [
+        'first_name',
+        'last_name',    
+        'gender',
         'dob',
         'email',
         'phone',
-        'gender',
-        'office',
         'address',
-        'pin_code',
-        'job_type',
-        'last_name',
-        'first_name',
-        'department',
+        'pin_code',         // Changed from pin_code to match form
+        'blood_group',
+        'emergency_contact_name',
+        'emergency_contact_relationship',
+        'emergency_contact_phone',
+        'emergency_contact_address',
         'created_at',
         'updated_at',
         'deleted_at',
-        'blood_group',
-        'designation',
     ];
 
     const OFFICE_SELECT = [
-        'OTP' => 'Office of the President',
-        'OVP' => 'Office of the Vice President',
-        'OCM' => 'Office of the Chief Minister',
-        'OFL' => 'Office of the First Lady',
-        'SL'  => 'State Lodge',
+        'main' => 'Main Office',
+        'branch' => 'Branch Office'
     ];
 
     public function registerMediaConversions(?Media $media = null): void    
@@ -112,5 +102,10 @@ class Patient extends Model implements HasMedia
         }
 
         return $file;
+    }
+    
+    public function getFullNameAttribute()
+    {
+        return $this->first_name . ' ' . $this->last_name;
     }
 }

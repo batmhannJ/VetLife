@@ -53,19 +53,16 @@
                             {{ trans('cruds.patient.fields.dob') }}
                         </th>
                         <th>
-                            {{ trans('cruds.patient.fields.office') }}
+                            {{ trans('cruds.patient.fields.emergency_contact_name') }}
                         </th>
                         <th>
-                            {{ trans('cruds.patient.fields.job_type') }}
+                            {{ trans('cruds.patient.fields.emergency_contact_relationship') }}
                         </th>
                         <th>
-                            {{ trans('cruds.patient.fields.department') }}
+                            {{ trans('cruds.patient.fields.emergency_contact_phone') }}
                         </th>
                         <th>
-                            {{ trans('cruds.patient.fields.designation') }}
-                        </th>
-                        <th>
-                            {{ trans('cruds.patient.fields.photo') }}
+                            {{ trans('cruds.patient.fields.emergency_contact_address') }}
                         </th>
                         <th>
                             {{ trans('cruds.patient.fields.created_at') }}
@@ -74,10 +71,7 @@
                             {{ trans('cruds.patient.fields.updated_at') }}
                         </th>
                         <th>
-                            {{ trans('cruds.patient.fields.deleted_at') }}
-                        </th>
-                        <th>
-                            &nbsp;
+                            Actions
                         </th>
                     </tr>
                 </thead>
@@ -118,32 +112,22 @@
                                 {{ $patient->dob ?? '' }}
                             </td>
                             <td>
-                                {{ App\Patient::OFFICE_SELECT[$patient->office] ?? '' }}
+                                {{ $patient->emergency_contact_name ?? '' }}
                             </td>
                             <td>
-                                {{ App\Patient::JOB_TYPE_SELECT[$patient->job_type] ?? '' }}
+                                {{ $patient->emergency_contact_relationship ?? '' }}
                             </td>
                             <td>
-                                {{ $patient->department ?? '' }}
+                                {{ $patient->emergency_contact_phone ?? '' }}
                             </td>
                             <td>
-                                {{ $patient->designation ?? '' }}
-                            </td>
-                            <td>
-                                @if($patient->photo)
-                                    <a href="{{ $patient->photo->getUrl() }}" target="_blank">
-                                        <img src="{{ $patient->photo->getUrl('thumb') }}" width="50px" height="50px">
-                                    </a>
-                                @endif
+                                {{ $patient->emergency_contact_address ?? '' }}
                             </td>
                             <td>
                                 {{ $patient->created_at ?? '' }}
                             </td>
                             <td>
                                 {{ $patient->updated_at ?? '' }}
-                            </td>
-                            <td>
-                                {{ $patient->deleted_at ?? '' }}
                             </td>
                             <td>
                                 @can('patient_show')
@@ -221,6 +205,5 @@
             .columns.adjust();
     });
 })
-
 </script>
 @endsection

@@ -122,56 +122,52 @@
                     {{ trans('cruds.patient.fields.dob_helper') }}
                 </p>
             </div>
-            <div class="form-group {{ $errors->has('office') ? 'has-error' : '' }}">
-                <label for="office">{{ trans('cruds.patient.fields.office') }}*</label>
-                <select id="office" name="office" class="form-control" required>
-                    <option value="" disabled {{ old('office', null) === null ? 'selected' : '' }}>{{ trans('global.pleaseSelect') }}</option>
-                    @foreach(App\Patient::OFFICE_SELECT as $key => $label)
-                        <option value="{{ $key }}" {{ old('office', $patient->office) === (string)$key ? 'selected' : '' }}>{{ $label }}</option>
-                    @endforeach
-                </select>
-                @if($errors->has('office'))
+            <div class="form-group {{ $errors->has('emergency_contact_name') ? 'has-error' : '' }}">
+                <label for="emergency_contact_name">{{ trans('cruds.patient.fields.emergency_contact_name') }}</label>
+                <input type="text" id="emergency_contact_name" name="emergency_contact_name" class="form-control" value="{{ old('emergency_contact_name', isset($patient) ? $patient->emergency_contact_name : '') }}">
+                @if($errors->has('emergency_contact_name'))
                     <p class="help-block">
-                        {{ $errors->first('office') }}
-                    </p>
-                @endif
-            </div>
-            <div class="form-group {{ $errors->has('job_type') ? 'has-error' : '' }}">
-                <label for="job_type">{{ trans('cruds.patient.fields.job_type') }}*</label>
-                <select id="job_type" name="job_type" class="form-control" required>
-                    <option value="" disabled {{ old('job_type', null) === null ? 'selected' : '' }}>{{ trans('global.pleaseSelect') }}</option>
-                    @foreach(App\Patient::JOB_TYPE_SELECT as $key => $label)
-                        <option value="{{ $key }}" {{ old('job_type', $patient->job_type) === (string)$key ? 'selected' : '' }}>{{ $label }}</option>
-                    @endforeach
-                </select>
-                @if($errors->has('job_type'))
-                    <p class="help-block">
-                        {{ $errors->first('job_type') }}
-                    </p>
-                @endif
-            </div>
-            <div class="form-group {{ $errors->has('department') ? 'has-error' : '' }}">
-                <label for="department">{{ trans('cruds.patient.fields.department') }}*</label>
-                <input type="text" id="department" name="department" class="form-control" value="{{ old('department', isset($patient) ? $patient->department : '') }}" required>
-                @if($errors->has('department'))
-                    <p class="help-block">
-                        {{ $errors->first('department') }}
+                        {{ $errors->first('emergency_contact_name') }}
                     </p>
                 @endif
                 <p class="helper-block">
-                    {{ trans('cruds.patient.fields.department_helper') }}
+                    {{ trans('cruds.patient.fields.emergency_contact_name_helper') }}
                 </p>
             </div>
-            <div class="form-group {{ $errors->has('designation') ? 'has-error' : '' }}">
-                <label for="designation">{{ trans('cruds.patient.fields.designation') }}*</label>
-                <input type="text" id="designation" name="designation" class="form-control" value="{{ old('designation', isset($patient) ? $patient->designation : '') }}" required>
-                @if($errors->has('designation'))
+            <div class="form-group {{ $errors->has('emergency_contact_relationship') ? 'has-error' : '' }}">
+                <label for="emergency_contact_relationship">{{ trans('cruds.patient.fields.emergency_contact_relationship') }}</label>
+                <input type="text" id="emergency_contact_relationship" name="emergency_contact_relationship" class="form-control" value="{{ old('emergency_contact_relationship', isset($patient) ? $patient->emergency_contact_relationship : '') }}">
+                @if($errors->has('emergency_contact_relationship'))
                     <p class="help-block">
-                        {{ $errors->first('designation') }}
+                        {{ $errors->first('emergency_contact_relationship') }}
                     </p>
                 @endif
                 <p class="helper-block">
-                    {{ trans('cruds.patient.fields.designation_helper') }}
+                    {{ trans('cruds.patient.fields.emergency_contact_relationship_helper') }}
+                </p>
+            </div>
+            <div class="form-group {{ $errors->has('emergency_contact_phone') ? 'has-error' : '' }}">
+                <label for="emergency_contact_phone">{{ trans('cruds.patient.fields.emergency_contact_phone') }}</label>
+                <input type="text" id="emergency_contact_phone" name="emergency_contact_phone" class="form-control" value="{{ old('emergency_contact_phone', isset($patient) ? $patient->emergency_contact_phone : '') }}">
+                @if($errors->has('emergency_contact_phone'))
+                    <p class="help-block">
+                        {{ $errors->first('emergency_contact_phone') }}
+                    </p>
+                @endif
+                <p class="helper-block">
+                    {{ trans('cruds.patient.fields.emergency_contact_phone_helper') }}
+                </p>
+            </div>
+            <div class="form-group {{ $errors->has('emergency_contact_address') ? 'has-error' : '' }}">
+                <label for="emergency_contact_address">{{ trans('cruds.patient.fields.emergency_contact_address') }}</label>
+                <input type="text" id="emergency_contact_address" name="emergency_contact_address" class="form-control" value="{{ old('emergency_contact_address', isset($patient) ? $patient->emergency_contact_address : '') }}">
+                @if($errors->has('emergency_contact_address'))
+                    <p class="help-block">
+                        {{ $errors->first('emergency_contact_address') }}
+                    </p>
+                @endif
+                <p class="helper-block">
+                    {{ trans('cruds.patient.fields.emergency_contact_address_helper') }}
                 </p>
             </div>
             <div class="form-group {{ $errors->has('photo') ? 'has-error' : '' }}">

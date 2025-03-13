@@ -30,7 +30,7 @@ class StorePatientRequest extends FormRequest
                 'required',
             ],
             'pin_code'    => [
-                'min:6',
+                'min:1',
                 'max:15',
                 'required',
                 'unique:patients',
@@ -49,18 +49,6 @@ class StorePatientRequest extends FormRequest
             'dob'         => [
                 'required',
                 'date_format:' . config('panel.date_format'),
-            ],
-            'office'      => [
-                'required',
-            ],
-            'job_type'    => [
-                'required',
-            ],
-            'department'  => [
-                'required',
-            ],
-            'designation' => [
-                'required',
             ],
         ];
     }

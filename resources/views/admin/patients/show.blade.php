@@ -92,46 +92,34 @@
                     </tr>
                     <tr>
                         <th>
-                            {{ trans('cruds.patient.fields.office') }}
+                            {{ trans('cruds.patient.fields.emergency_contact_name') }}
                         </th>
                         <td>
-                            {{ App\Patient::OFFICE_SELECT[$patient->office] ?? '' }}
+                            {{ $patient->emergency_contact_name }}
                         </td>
                     </tr>
                     <tr>
                         <th>
-                            {{ trans('cruds.patient.fields.job_type') }}
+                            {{ trans('cruds.patient.fields.emergency_contact_relationship') }}
                         </th>
                         <td>
-                            {{ App\Patient::JOB_TYPE_SELECT[$patient->job_type] ?? '' }}
+                            {{ $patient->emergency_contact_relationship }}
                         </td>
                     </tr>
                     <tr>
                         <th>
-                            {{ trans('cruds.patient.fields.department') }}
+                            {{ trans('cruds.patient.fields.emergency_contact_phone') }}
                         </th>
                         <td>
-                            {{ $patient->department }}
+                            {{ $patient->emergency_contact_phone }}
                         </td>
                     </tr>
                     <tr>
                         <th>
-                            {{ trans('cruds.patient.fields.designation') }}
+                            {{ trans('cruds.patient.fields.emergency_contact_address') }}
                         </th>
                         <td>
-                            {{ $patient->designation }}
-                        </td>
-                    </tr>
-                    <tr>
-                        <th>
-                            {{ trans('cruds.patient.fields.photo') }}
-                        </th>
-                        <td>
-                            @if($patient->photo)
-                                <a href="{{ $patient->photo->getUrl() }}" target="_blank">
-                                    <img src="{{ $patient->photo->getUrl('thumb') }}" width="50px" height="50px">
-                                </a>
-                            @endif
+                            {{ $patient->emergency_contact_address }}
                         </td>
                     </tr>
                     <tr>
@@ -148,14 +136,6 @@
                         </th>
                         <td>
                             {{ $patient->updated_at }}
-                        </td>
-                    </tr>
-                    <tr>
-                        <th>
-                            {{ trans('cruds.patient.fields.deleted_at') }}
-                        </th>
-                        <td>
-                            {{ $patient->deleted_at }}
                         </td>
                     </tr>
                 </tbody>
