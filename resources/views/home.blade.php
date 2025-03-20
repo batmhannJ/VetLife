@@ -16,7 +16,6 @@
                         </div>
                     @endif
 
-                    <!-- Statistics Summary Cards -->
                     <div class="row mb-4">
                         <div class="{{ $settings1['column_class'] }}">
                             <div class="info-box">
@@ -67,7 +66,6 @@
                         </div>
                     </div>
                     
-                    <!-- Appointment Chart -->
                     <div class="row">
                         <div class="col-md-12">
                             <div class="card">
@@ -93,145 +91,6 @@
                             </div>
                         </div>
                     </div>
-
-                    <div class="row">
-                        <!-- Latest Appointments Table -->
-                        <div class="{{ $settings5['column_class'] }}">
-                            <div class="card">
-                                <div class="card-header border-0">
-                                    <h3 class="card-title">{{ $settings5['chart_title'] }}</h3>
-                                </div>
-                                <div class="card-body table-responsive p-0">
-                                    <table class="table table-hover text-nowrap">
-                                        <thead>
-                                            <tr>
-                                                @foreach($settings5['fields'] as $field)
-                                                    <th>{{ ucfirst($field) }}</th>
-                                                @endforeach
-                                                <th>Actions</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            @forelse($settings5['data'] as $row)
-                                                <tr>
-                                                    @foreach($settings5['fields'] as $field)
-                                                        <td>{{ $row->{$field} }}</td>
-                                                    @endforeach
-                                                    <td>
-                                                        <div class="btn-group">
-                                                            <button type="button" class="btn btn-sm btn-info">View</button>
-                                                            <button type="button" class="btn btn-sm btn-success">Confirm</button>
-                                                        </div>
-                                                    </td>
-                                                </tr>
-                                            @empty
-                                                <tr>
-                                                    <td colspan="{{ count($settings5['fields']) + 1 }}">{{ __('No entries found') }}</td>
-                                                </tr>
-                                            @endforelse
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Latest Prescriptions Table -->
-                        <div class="{{ $settings6['column_class'] }}">
-                            <div class="card">
-                                <div class="card-header border-0">
-                                    <h3 class="card-title">{{ $settings6['chart_title'] }}</h3>
-                                </div>
-                                <div class="card-body table-responsive p-0">
-                                    <table class="table table-hover text-nowrap">
-                                        <thead>
-                                            <tr>
-                                                @foreach($settings6['fields'] as $field)
-                                                    <th>{{ ucfirst($field) }}</th>
-                                                @endforeach
-                                                <th>Actions</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            @forelse($settings6['data'] as $row)
-                                                <tr>
-                                                    @foreach($settings6['fields'] as $field)
-                                                        <td>{{ $row->{$field} }}</td>
-                                                    @endforeach
-                                                    <td>
-                                                        <button type="button" class="btn btn-sm btn-info">View</button>
-                                                    </td>
-                                                </tr>
-                                            @empty
-                                                <tr>
-                                                    <td colspan="{{ count($settings6['fields']) + 1 }}">{{ __('No entries found') }}</td>
-                                                </tr>
-                                            @endforelse
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Quick Access Buttons -->
-                    <div class="row mt-4">
-                        <div class="col-lg-3 col-6">
-                            <div class="small-box bg-info">
-                                <div class="inner">
-                                    <h3>Add Doctor</h3>
-                                    <p>Create new doctor account</p>
-                                </div>
-                                <div class="icon">
-                                    <i class="fas fa-user-md"></i>
-                                </div>
-                                <a href="{{ route('admin.doctors.create') }}" class="small-box-footer">
-                                    Create Doctor <i class="fas fa-arrow-circle-right"></i>
-                                </a>
-                            </div>
-                        </div>
-                        <div class="col-lg-3 col-6">
-                            <div class="small-box bg-success">
-                                <div class="inner">
-                                    <h3>Add Patient</h3>
-                                    <p>Register new patient</p>
-                                </div>
-                                <div class="icon">
-                                    <i class="fas fa-user-plus"></i>
-                                </div>
-                                <a href="{{ route('admin.patients.create') }}" class="small-box-footer">
-                                    Add Patient <i class="fas fa-arrow-circle-right"></i>
-                                </a>
-                            </div>
-                        </div>
-                        <div class="col-lg-3 col-6">
-                            <div class="small-box bg-warning">
-                                <div class="inner">
-                                    <h3>Schedule</h3>
-                                    <p>View and manage schedules</p>
-                                </div>
-                                <div class="icon">
-                                    <i class="fas fa-calendar-alt"></i>
-                                </div>
-                                <a href="{{ route('admin.schedules.index') }}" class="small-box-footer">
-                                    Manage Schedule <i class="fas fa-arrow-circle-right"></i>
-                                </a>
-                            </div>
-                        </div>
-                        <div class="col-lg-3 col-6">
-                            <div class="small-box bg-danger">
-                                <div class="inner">
-                                    <h3>Reports</h3>
-                                    <p>Generate clinical reports</p>
-                                </div>
-                                <div class="icon">
-                                    <i class="fas fa-chart-line"></i>
-                                </div>
-                                <a href="{{ route('admin.reports.index') }}" class="small-box-footer">
-                                    View Reports <i class="fas fa-arrow-circle-right"></i>
-                                </a>
-                            </div>
-                        </div>
-                    </div>
                 </div>
             </div>
         </div>
@@ -243,31 +102,32 @@
 @parent
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.min.js"></script>
 <script>
-    // Appointment Chart
     $(function() {
         var ctx = document.getElementById('appointmentChart').getContext('2d');
+
+        // Sample data for demonstration purposes
+        // IMPORTANT: Replace this with your actual data retrieval logic in your controller.
+        var appointmentData = {!! json_encode($appointmentData) !!};
+
+        var chartData = {
+            labels: Object.keys(appointmentData),
+            datasets: [
+                {
+                    label: 'Appointments',
+                    backgroundColor: [
+                        '#5bc0de',
+                        '#d9534f',
+                        '#28a745',
+                        '#f0ad4e'
+                    ],
+                    data: Object.values(appointmentData)
+                }
+            ]
+        };
+
         var appointmentChart = new Chart(ctx, {
-            type: 'bar',
-            data: {
-                labels: ['January', 'February', 'March', 'April', 'May', 'June'],
-                datasets: [
-                    {
-                        label: 'New Appointments',
-                        backgroundColor: '#28a745',
-                        data: [65, 59, 80, 81, 56, 55]
-                    },
-                    {
-                        label: 'Completed',
-                        backgroundColor: '#17a2b8',
-                        data: [55, 49, 70, 71, 46, 45]
-                    },
-                    {
-                        label: 'Cancelled',
-                        backgroundColor: '#dc3545',
-                        data: [10, 10, 10, 10, 10, 10]
-                    }
-                ]
-            },
+            type: 'bar', // Or 'pie', 'doughnut', etc.
+            data: chartData,
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
@@ -277,6 +137,11 @@
                             beginAtZero: true
                         }
                     }]
+                },
+                 plugins: {
+                    legend: {
+                        position: 'top', // Optional: Position the legend
+                    },
                 }
             }
         });

@@ -1,8 +1,10 @@
 <aside class="main-sidebar sidebar-dark-primary elevation-4" style="min-height: 917px;">
     <!-- Brand Logo -->
-    <a href="#" class="brand-link">
-        <span class="brand-text font-weight-light">{{ trans('panel.site_title') }}</span>
+    <div style="text-align: center;">
+    <a href="{{ route('admin.home') }}">
+        <img src="{{ asset('images/logo.png') }}" alt="CLSU-VETLIFE Logo" style="max-width: 200px; height:50px; padding-top: 10px;">
     </a>
+</div>
 
     <!-- Sidebar -->
     <div class="sidebar">

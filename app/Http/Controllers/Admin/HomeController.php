@@ -2,12 +2,25 @@
 
 namespace App\Http\Controllers\Admin;
 
-use LaravelDaily\LaravelCharts\Classes\LaravelChart;
+use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\DB;
+use App\Models\Appointment;
+use App\Models\Patient;
+use App\Models\Prescription;
+use App\Models\Medicine;
+use App\Models\Test;
+use Illuminate\View\View; // Import the View class
 
-class HomeController
+class HomeController extends Controller
 {
-    public function index()
+    /**
+     * Display the dashboard view.
+     *
+     * @return View
+     */
+    public function index(): View
     {
+
         $settings1 = [
             'chart_title'           => 'Total Patient',
             'chart_type'            => 'number_block',
@@ -52,7 +65,7 @@ class HomeController
             })
                 ->{$settings1['aggregate_function'] ?? 'count'}($settings1['aggregate_field'] ?? '*');
         }
-
+        
         $settings2 = [
             'chart_title'           => 'Total Prescription',
             'chart_type'            => 'number_block',
@@ -187,120 +200,375 @@ class HomeController
             })
                 ->{$settings4['aggregate_function'] ?? 'count'}($settings4['aggregate_field'] ?? '*');
         }
+        $settings5 = $this->getSettings5Data();
+        $settings6 = $this->getSettings6Data();
+        $settings7 = $this->getSettings7Data();
 
-        $settings5 = [
-            'chart_title'           => 'Patient List',
-            'chart_type'            => 'latest_entries',
-            'report_type'           => 'group_by_date',
-            'model'                 => 'App\\Patient',
-            'group_by_field'        => 'dob',
-            'group_by_period'       => 'day',
-            'aggregate_function'    => 'count',
-            'filter_field'          => 'created_at',
+        // --- Appointment Data ---
+        $appointmentData = $this->getAppointmentData();
+
+        // --- Return the view ---
+        return view('home', compact(
+            'settings1',
+            'settings2',
+            'settings3',
+            'settings4',
+            'settings5',
+            'settings6',
+            'settings7',
+            'appointmentData'
+        ));
+    }
+
+    /**
+     * Get the data for the "Total Patient" number block.
+     *
+     * @return array
+     */
+    private function getSettings1Data(): array
+    {
+        $settings = [
+            'chart_title' => 'Total Patient',
+            'chart_type' => 'number_block',
+            'report_type' => 'group_by_date',
+            'model' => 'App\\Models\\Patient', // Corrected model path
+            'group_by_field' => 'dob',
+            'group_by_period' => 'day',
+            'aggregate_function' => 'count',
+            'filter_field' => 'created_at',
             'group_by_field_format' => 'Y-m-d',
-            'column_class'          => 'col-md-12',
-            'entries_number'        => '5',
-            'fields'                => [
-                '0' => 'first_name',
-                '1' => 'last_name',
-                '2' => 'pin_code',
-                '3' => 'office',
-                '4' => 'job_type',
-            ],
+            'column_class' => 'col-md-3',
+            'entries_number' => '5',
         ];
 
-        $settings5['data'] = [];
+        $settings['total_number'] = 0;
 
-        if (class_exists($settings5['model'])) {
-            $settings5['data'] = $settings5['model']::latest()
-                ->take($settings5['entries_number'])
-                ->get();
-        }
-
-        if (!array_key_exists('fields', $settings5)) {
-            $settings5['fields'] = [];
-        }
-
-        $settings6 = [
-            'chart_title'           => 'Medicine List',
-            'chart_type'            => 'latest_entries',
-            'report_type'           => 'group_by_date',
-            'model'                 => 'App\\Medicine',
-            'group_by_field'        => 'created_at',
-            'group_by_period'       => 'day',
-            'aggregate_function'    => 'count',
-            'filter_field'          => 'created_at',
-            'group_by_field_format' => 'Y-m-d H:i:s',
-            'column_class'          => 'col-md-12',
-            'entries_number'        => '5',
-            'fields'                => [
-                '0' => 'name',
-                '1' => 'item_code',
-                '2' => 'type',
-                '3' => 'qty_received',
-                '4' => 'date_received',
-                '5' => 'expiry_date',
-            ],
-        ];
-
-        $settings6['data'] = [];
-
-        if (class_exists($settings6['model'])) {
-            $settings6['data'] = $settings6['model']::latest()
-                ->take($settings6['entries_number'])
-                ->get();
-        }
-
-        if (!array_key_exists('fields', $settings6)) {
-            $settings6['fields'] = [];
-        }
-
-        $settings7 = [
-            'chart_title'           => 'Total Drugs Received',
-            'chart_type'            => 'number_block',
-            'report_type'           => 'group_by_date',
-            'model'                 => 'App\\Medicine',
-            'group_by_field'        => 'created_at',
-            'group_by_period'       => 'day',
-            'aggregate_function'    => 'sum',
-            'aggregate_field'       => 'qty_received',
-            'filter_field'          => 'created_at',
-            'group_by_field_format' => 'Y-m-d H:i:s',
-            'column_class'          => 'col-md-3',
-            'entries_number'        => '5',
-        ];
-
-        $settings7['total_number'] = 0;
-
-        if (class_exists($settings7['model'])) {
-            $settings7['total_number'] = $settings7['model']::when(isset($settings7['filter_field']), function ($query) use ($settings7) {
-                if (isset($settings7['filter_days'])) {
+        if (class_exists($settings['model'])) {
+            $settings['total_number'] = $settings['model']::when(isset($settings['filter_field']), function ($query) use ($settings) {
+                if (isset($settings['filter_days'])) {
                     return $query->where(
-                        $settings7['filter_field'],
+                        $settings['filter_field'],
                         '>=',
-                        now()->subDays($settings7['filter_days'])->format('Y-m-d')
+                        now()->subDays($settings['filter_days'])->format('Y-m-d')
                     );
-                } else if (isset($settings7['filter_period'])) {
-                    switch ($settings7['filter_period']) {
-                        case 'week':
-                            $start  = date('Y-m-d', strtotime('last Monday'));
-                            break;
-                        case 'month':
-                            $start = date('Y-m') . '-01';
-                            break;
-                        case 'year':
-                            $start  = date('Y') . '-01-01';
-                            break;
-                    }
-
+                } elseif (isset($settings['filter_period'])) {
+                    $start = $this->getFilterPeriodStart($settings['filter_period']);
                     if (isset($start)) {
-                        return $query->where($settings7['filter_field'], '>=', $start);
+                        return $query->where($settings['filter_field'], '>=', $start);
                     }
                 }
             })
-                ->{$settings7['aggregate_function'] ?? 'count'}($settings7['aggregate_field'] ?? '*');
+                ->{$settings['aggregate_function'] ?? 'count'}($settings['aggregate_field'] ?? '*');
         }
 
-        return view('home', compact('settings1', 'settings2', 'settings3', 'settings4', 'settings5', 'settings6', 'settings7'));
+        return $settings;
+    }
+
+    /**
+     * Get the data for the "Total Prescription" number block.
+     *
+     * @return array
+     */
+    private function getSettings2Data(): array
+    {
+        $settings = [
+            'chart_title' => 'Total Prescription',
+            'chart_type' => 'number_block',
+            'report_type' => 'group_by_date',
+            'model' => 'App\\Models\\Prescription', // Corrected model path
+            'group_by_field' => 'created_at',
+            'group_by_period' => 'day',
+            'aggregate_function' => 'count',
+            'filter_field' => 'created_at',
+            'group_by_field_format' => 'Y-m-d H:i:s',
+            'column_class' => 'col-md-3',
+            'entries_number' => '5',
+        ];
+
+        $settings['total_number'] = 0;
+
+        if (class_exists($settings['model'])) {
+            $settings['total_number'] = $settings['model']::when(isset($settings['filter_field']), function ($query) use ($settings) {
+                if (isset($settings['filter_days'])) {
+                    return $query->where(
+                        $settings['filter_field'],
+                        '>=',
+                        now()->subDays($settings['filter_days'])->format('Y-m-d H:i:s')
+                    );
+                } elseif (isset($settings['filter_period'])) {
+                    $start = $this->getFilterPeriodStart($settings['filter_period']);
+                    if (isset($start)) {
+                        return $query->where($settings['filter_field'], '>=', $start);
+                    }
+                }
+            })
+                ->{$settings['aggregate_function'] ?? 'count'}($settings['aggregate_field'] ?? '*');
+        }
+
+        return $settings;
+    }
+
+    /**
+     * Get the data for the "Total Medicine" number block.
+     *
+     * @return array
+     */
+    private function getSettings3Data(): array
+    {
+        $settings = [
+            'chart_title' => 'Total Medicine',
+            'chart_type' => 'number_block',
+            'report_type' => 'group_by_date',
+            'model' => 'App\\Models\\Medicine', // Corrected model path
+            'group_by_field' => 'created_at',
+            'group_by_period' => 'day',
+            'aggregate_function' => 'count',
+            'filter_field' => 'created_at',
+            'group_by_field_format' => 'Y-m-d H:i:s',
+            'column_class' => 'col-md-3',
+            'entries_number' => '5',
+        ];
+
+        $settings['total_number'] = 0;
+
+        if (class_exists($settings['model'])) {
+            $settings['total_number'] = $settings['model']::when(isset($settings['filter_field']), function ($query) use ($settings) {
+                if (isset($settings['filter_days'])) {
+                    return $query->where(
+                        $settings['filter_field'],
+                        '>=',
+                        now()->subDays($settings['filter_days'])->format('Y-m-d H:i:s')
+                    );
+                } elseif (isset($settings['filter_period'])) {
+                    $start = $this->getFilterPeriodStart($settings['filter_period']);
+                    if (isset($start)) {
+                        return $query->where($settings['filter_field'], '>=', $start);
+                    }
+                }
+            })
+                ->{$settings['aggregate_function'] ?? 'count'}($settings['aggregate_field'] ?? '*');
+        }
+
+        return $settings;
+    }
+
+    /**
+     * Get the data for the "Total Test" number block.
+     *
+     * @return array
+     */
+    private function getSettings4Data(): array
+    {
+        $settings = [
+            'chart_title' => 'Total Test',
+            'chart_type' => 'number_block',
+            'report_type' => 'group_by_date',
+            'model' => 'App\\Models\\Test', // Corrected model path
+            'group_by_field' => 'created_at',
+            'group_by_period' => 'day',
+            'aggregate_function' => 'count',
+            'filter_field' => 'created_at',
+            'group_by_field_format' => 'Y-m-d H:i:s',
+            'column_class' => 'col-md-3',
+            'entries_number' => '5',
+        ];
+
+        $settings['total_number'] = 0;
+
+        if (class_exists($settings['model'])) {
+            $settings['total_number'] = $settings['model']::when(isset($settings['filter_field']), function ($query) use ($settings) {
+                if (isset($settings['filter_days'])) {
+                    return $query->where(
+                        $settings['filter_field'],
+                        '>=',
+                        now()->subDays($settings['filter_days'])->format('Y-m-d H:i:s')
+                    );
+                } elseif (isset($settings['filter_period'])) {
+                    $start = $this->getFilterPeriodStart($settings['filter_period']);
+                    if (isset($start)) {
+                        return $query->where($settings['filter_field'], '>=', $start);
+                    }
+                }
+            })
+                ->{$settings['aggregate_function'] ?? 'count'}($settings['aggregate_field'] ?? '*');
+        }
+
+        return $settings;
+    }
+
+    /**
+     * Get the data for the "Patient List" table.
+     *
+     * @return array
+     */
+    private function getSettings5Data(): array
+    {
+        $settings = [
+            'chart_title' => 'Patient List',
+            'chart_type' => 'latest_entries',
+            'report_type' => 'group_by_date',
+            'model' => 'App\\Models\\Patient',  // Corrected model path
+            'group_by_field' => 'dob',
+            'group_by_period' => 'day',
+            'aggregate_function' => 'count',
+            'filter_field' => 'created_at',
+            'group_by_field_format' => 'Y-m-d',
+            'column_class' => 'col-md-12',
+            'entries_number' => '5',
+            'fields' => [
+                'first_name',
+                'last_name',
+                'pin_code',
+                'office',
+                'job_type',
+            ],
+        ];
+
+        $settings['data'] = [];
+
+        if (class_exists($settings['model'])) {
+            $settings['data'] = $settings['model']::latest()
+                ->take($settings['entries_number'])
+                ->get();
+        }
+
+        if (!array_key_exists('fields', $settings)) {
+            $settings['fields'] = [];
+        }
+
+        return $settings;
+    }
+
+    /**
+     * Get the data for the "Medicine List" table.
+     *
+     * @return array
+     */
+    private function getSettings6Data(): array
+    {
+        $settings = [
+            'chart_title' => 'Medicine List',
+            'chart_type' => 'latest_entries',
+            'report_type' => 'group_by_date',
+            'model' => 'App\\Models\\Medicine', // Corrected model path
+            'group_by_field' => 'created_at',
+            'group_by_period' => 'day',
+            'aggregate_function' => 'count',
+            'filter_field' => 'created_at',
+            'group_by_field_format' => 'Y-m-d H:i:s',
+            'column_class' => 'col-md-12',
+            'entries_number' => '5',
+            'fields' => [
+                'name',
+                'item_code',
+                'type',
+                'qty_received',
+                'date_received',
+                'expiry_date',
+            ],
+        ];
+
+        $settings['data'] = [];
+
+        if (class_exists($settings['model'])) {
+            $settings['data'] = $settings['model']::latest()
+                ->take($settings['entries_number'])
+                ->get();
+        }
+
+        if (!array_key_exists('fields', $settings)) {
+            $settings['fields'] = [];
+        }
+
+        return $settings;
+    }
+
+    /**
+     * Get the data for the "Total Drugs Received" number block.
+     * @return array
+     */
+    private function getSettings7Data(): array
+    {
+        $settings = [
+            'chart_title' => 'Total Drugs Received',
+            'chart_type' => 'number_block',
+            'report_type' => 'group_by_date',
+            'model' => 'App\\Models\\Medicine', // Corrected model path
+            'group_by_field' => 'created_at',
+            'group_by_period' => 'day',
+            'aggregate_function' => 'sum',
+            'aggregate_field' => 'qty_received',
+            'filter_field' => 'created_at',
+            'group_by_field_format' => 'Y-m-d H:i:s',
+            'column_class' => 'col-md-3',
+            'entries_number' => '5',
+        ];
+
+        $settings['total_number'] = 0;
+
+        if (class_exists($settings['model'])) {
+            $settings['total_number'] = $settings['model']::when(isset($settings['filter_field']), function ($query) use ($settings) {
+                if (isset($settings['filter_days'])) {
+                    return $query->where(
+                        $settings['filter_field'],
+                        '>=',
+                        now()->subDays($settings['filter_days'])->format('Y-m-d H:i:s')
+                    );
+                } elseif (isset($settings['filter_period'])) {
+                    $start = $this->getFilterPeriodStart($settings['filter_period']);
+                    if (isset($start)) {
+                        return $query->where($settings['filter_field'], '>=', $start);
+                    }
+                }
+            })
+                ->{$settings['aggregate_function'] ?? 'count'}($settings['aggregate_field'] ?? '*');
+        }
+
+        return $settings;
+    }
+
+    /**
+     * Get the appointment data for the chart.
+     *
+     * @return array
+     */
+    private function getAppointmentData(): array
+    {
+        $appointmentData = Appointment::select(
+            'status',
+            DB::raw('count(*) as count')
+        )
+            ->groupBy('status')
+            ->get()
+            ->pluck('count', 'status')
+            ->toArray();
+
+        $allStatuses = ['Pending', 'Approved', 'Completed', 'Cancelled'];
+        foreach ($allStatuses as $status) {
+            if (!isset($appointmentData[$status])) {
+                $appointmentData[$status] = 0;
+            }
+        }
+        return $appointmentData;
+    }
+
+     /**
+     * Get the start date for a given filter period.
+     *
+     * @param string $period The filter period ('week', 'month', 'year').
+     * @return string|null The start date in 'Y-m-d' format, or null if invalid period.
+     */
+    private function getFilterPeriodStart(string $period): ?string
+    {
+        switch ($period) {
+            case 'week':
+                return date('Y-m-d', strtotime('last Monday'));
+            case 'month':
+                return date('Y-m') . '-01';
+            case 'year':
+                return date('Y') . '-01-01';
+            default:
+                return null;
+        }
     }
 }

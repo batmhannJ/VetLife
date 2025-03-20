@@ -4,7 +4,8 @@
     <div class="login-logo">
         <div class="login-logo">
             <a href="{{ route('admin.home') }}">
-                {{ trans('panel.site_title') }}
+                <img src="{{ asset('images/clsu-logo.png') }}" alt="CLSU Logo" style="max-width: 150px; margin-bottom: 20px;">
+                <img src="{{ asset('images/logo.png') }}" alt="CLSU-VETLIFE Logo" style="max-width: 250px;">
             </a>
         </div>
     </div>
