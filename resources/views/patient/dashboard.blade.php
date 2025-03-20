@@ -100,97 +100,111 @@
 @section('scripts')
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // Initial variables
     let currentDate = new Date();
     let currentMonth = currentDate.getMonth();
     let currentYear = currentDate.getFullYear();
-    let maxAppointmentsPerDay = 30; // Maximum appointments per day
+    const MAX_APPOINTMENTS_PER_DAY = 20; // Maximum appointments per day - set as constant
     
-    // Fetch appointment data
-    let appointmentData = {}; // Will be populated from AJAX request
+    let appointmentData = {};
     
-    // Function to fetch appointment counts
     function fetchAppointmentCounts() {
-        // Use GET request to match your original code
-        fetch('{{ route("patient.appointments.counts") }}')
-            .then(response => response.json())
-            .then(data => {
-                appointmentData = data;
-                renderCalendar();
-                console.log('Appointment data fetched successfully');
-            })
-            .catch(error => {
-                console.error('Error fetching appointment data:', error);
-                renderCalendar(); // Render calendar anyway
-            });
-    }
+    // Use the correct URL
+    const url = '/appointments/counts'; // Remove the /patient/ prefix
+    console.log('Fetching appointment counts from URL:', url);
     
-    // Function to generate calendar
+    fetch(url, {
+        method: 'GET',
+        headers: {
+            'Accept': 'application/json',
+            'X-Requested-With': 'XMLHttpRequest',
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content')
+        },
+        credentials: 'same-origin'
+    })
+    .then(response => {
+        console.log('Response status:', response.status);
+        if (!response.ok) {
+            return response.text().then(text => {
+                console.error('Error response text:', text);
+                throw new Error(`Server returned ${response.status}: ${text}`);
+            });
+        }
+        
+        const contentType = response.headers.get('content-type');
+        if (!contentType || !contentType.includes('application/json')) {
+            return response.text().then(text => {
+                console.error('Invalid content type or non-JSON response:', text.substring(0, 100) + '...');
+                throw new Error('Response is not JSON');
+            });
+        }
+        
+        return response.json();
+    })
+    .then(data => {
+        console.log('Appointment data fetched successfully:', data);
+        appointmentData = data;
+        renderCalendar();
+    })
+    .catch(error => {
+        console.error('Error fetching appointment data:', error);
+        // Continue with empty appointment data rather than failing completely
+        appointmentData = {};
+        renderCalendar(); 
+    });
+}
+    
     function renderCalendar() {
         const calendarBody = document.querySelector('#appointmentCalendar tbody');
         calendarBody.innerHTML = '';
         
-        // Update month and year display
         document.getElementById('currentMonthYear').textContent = 
             new Date(currentYear, currentMonth).toLocaleString('default', { month: 'long', year: 'numeric' });
         
-        // Get first day of month
         const firstDay = new Date(currentYear, currentMonth, 1).getDay();
         
-        // Get number of days in month
         const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
         
-        // Variables for calendar generation
         let date = 1;
         
-        // Create calendar rows
         for (let i = 0; i < 6; i++) {
-            // Create row
             const row = document.createElement('tr');
             
-            // Create cells
             for (let j = 0; j < 7; j++) {
                 const cell = document.createElement('td');
                 
                 if (i === 0 && j < firstDay) {
-                    // Empty cells before first day of month
                     cell.textContent = '';
                 } else if (date > daysInMonth) {
-                    // Empty cells after last day of month
                     cell.textContent = '';
                 } else {
-                    // Cells with dates
                     const dateStr = `${currentYear}-${String(currentMonth + 1).padStart(2, '0')}-${String(date).padStart(2, '0')}`;
+                    console.log(`Date ${dateStr}, appointments:`, appointmentData[dateStr]);
+
                     const appointmentsForDate = appointmentData[dateStr] || 0;
-                    const availableAppointments = maxAppointmentsPerDay - appointmentsForDate;
                     
-                    // Create date display
+                    const availableAppointments = MAX_APPOINTMENTS_PER_DAY - appointmentsForDate;
+                    
                     const dateDisplay = document.createElement('div');
                     dateDisplay.textContent = date;
                     dateDisplay.className = 'fw-bold';
                     
-                    // Create availability display
                     const availabilityDisplay = document.createElement('div');
                     availabilityDisplay.textContent = `${availableAppointments} available`;
                     availabilityDisplay.className = 'small';
                     
-                    // Create clickable wrapper
                     const wrapper = document.createElement('div');
                     wrapper.className = 'date-cell';
                     wrapper.appendChild(dateDisplay);
                     wrapper.appendChild(availabilityDisplay);
                     
-                    // Add date to cell
                     cell.appendChild(wrapper);
                     
-                    // Highlight today's date
                     if (date === new Date().getDate() && 
                         currentMonth === new Date().getMonth() && 
                         currentYear === new Date().getFullYear()) {
                         cell.classList.add('bg-info', 'text-white');
                     }
                     
-                    // Style based on availability
                     if (availableAppointments <= 0) {
                         cell.classList.add('bg-danger', 'text-white');
                     } else if (availableAppointments < 10) {
@@ -199,20 +213,19 @@ document.addEventListener('DOMContentLoaded', function() {
                         cell.classList.add('bg-success', 'text-white');
                     }
                     
-                    // Make cell clickable for appointment selection
                     cell.dataset.date = dateStr;
                     cell.style.cursor = 'pointer';
                     cell.addEventListener('click', function() {
                         if (availableAppointments > 0) {
-                            // Set the date in the appointment form
                             document.getElementById('appointmentDate').value = dateStr;
                             document.getElementById('selectedDateFormatted').value = dateStr;
                             
-                            // Highlight the selected cell
                             document.querySelectorAll('#appointmentCalendar td.selected').forEach(el => {
                                 el.classList.remove('selected', 'bg-primary');
                             });
                             this.classList.add('selected', 'bg-primary');
+                        } else {
+                            alert('No appointments available for this date.');
                         }
                     });
                     
@@ -224,14 +237,11 @@ document.addEventListener('DOMContentLoaded', function() {
             
             calendarBody.appendChild(row);
             
-            // Stop if we've used all days of the month
             if (date > daysInMonth) {
                 break;
             }
         }
     }
-    
-    // Navigate to previous month
     document.getElementById('prevMonth').addEventListener('click', function() {
         currentMonth--;
         if (currentMonth < 0) {
@@ -241,7 +251,6 @@ document.addEventListener('DOMContentLoaded', function() {
         fetchAppointmentCounts();
     });
     
-    // Navigate to next month
     document.getElementById('nextMonth').addEventListener('click', function() {
         currentMonth++;
         if (currentMonth > 11) {
@@ -251,10 +260,8 @@ document.addEventListener('DOMContentLoaded', function() {
         fetchAppointmentCounts();
     });
     
-    // Initial fetch and render
     fetchAppointmentCounts();
     
-    // Styling for calendar
     const style = document.createElement('style');
     style.textContent = `
         .date-cell {
@@ -268,57 +275,64 @@ document.addEventListener('DOMContentLoaded', function() {
     `;
     document.head.appendChild(style);
 
-    // Fix for appointment form submission
     const appointmentForm = document.querySelector('form');
     if (appointmentForm) {
-        // Fix for time field
         const timeField = document.querySelector('input[name="appointment_time"]');
         if (timeField && !timeField.value) {
             timeField.value = '08:00'; // Default to 8:00 AM
         }
-// Modify the form submission handler in dashboard.blade.php
-appointmentForm.addEventListener('submit', function(event) {
-    event.preventDefault(); // Prevent default form submission
-    
-    // Get selected time and explicitly log it for debugging
-    const timeField = document.querySelector('input[name="appointment_time"]');
-    const selectedTime = timeField.value;
-    console.log('Selected time before submission:', selectedTime);
-    
-    // Create FormData object
-    const formData = new FormData(this);
-    
-    // Double-check what's in formData
-    console.log('FormData appointment_time:', formData.get('appointment_time'));
-    
-    // Submit the form via AJAX with explicit Content-Type
-    fetch(this.action, {
-        method: 'POST',
-        body: formData,
-        headers: {
-            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content'),
-            // Don't set Content-Type for FormData - browser will set it with boundary
-        }
-    })
-    .then(response => {
-        console.log('Response status:', response.status);
-        return response.json();
-    })
-    .then(data => {
-        console.log('Response data:', data);
-        if (data.success) {
-            // Update UI logic here
-            alert('Appointment created successfully!');
-            // Don't reset form yet - for debugging purposes
-        } else {
-            alert('Failed to create appointment: ' + (data.message || 'Unknown error'));
-        }
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        alert('An error occurred while submitting the form.');
-    });
-});
+        
+        appointmentForm.addEventListener('submit', function(event) {
+            event.preventDefault(); 
+
+            const selectedDate = document.getElementById('appointmentDate').value;
+            
+            const dateStr = selectedDate;
+            const appointmentsForDate = appointmentData[dateStr] || 0;
+            const availableAppointments = MAX_APPOINTMENTS_PER_DAY - appointmentsForDate;
+            
+            if (availableAppointments <= 0) {
+                alert('No appointments available for this date.');
+                return;
+            }
+            
+            const formData = new FormData(this);
+            
+            fetch(this.action, {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content'),
+                }
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log('Appointment submission response:', data);
+                
+                if (data.success) {
+                    alert('Appointment created successfully!');
+                    this.reset();
+                    
+                    document.querySelectorAll('#appointmentCalendar td.selected').forEach(el => {
+                        el.classList.remove('selected', 'bg-primary');
+                    });
+                    
+                    // Instead of manually updating the local data, fetch fresh data
+                    fetchAppointmentCounts();
+                } else {
+                    alert('Failed to create appointment: ' + (data.message || 'Unknown error'));
+                }
+            })
+            .catch(error => {
+                console.error('Error submitting appointment:', error);
+                alert('An error occurred while submitting the form.');
+            });
+        });
     }
 });
 </script>

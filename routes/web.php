@@ -97,12 +97,13 @@ Route::group(['prefix' => 'patient', 'as' => 'patient.', 'namespace' => 'Patient
     Route::get('/appointments/{appointment}', [AppointmentController::class, 'show'])->name('appointments.show');
     Route::get('/appointments/create', 'AppointmentController@create')->name('appointments.create');
     Route::post('/appointments', 'AppointmentController@store')->name('appointments.store');
-    Route::get('/appointments/counts', [AppointmentController::class, 'getAppointmentCounts'])->name('appointments.counts');
+    //Route::get('/appointments/counts', 'AppointmentController@getAppointmentCounts')->name('appointments.counts');
+
     Route::delete('/appointments/{appointment}', [AppointmentController::class, 'destroy'])->name('appointments.destroy');
     Route::get('/prescriptions', 'PrescriptionController@index')->name('prescriptions.index');
     Route::get('/test-results', 'TestResultController@index')->name('test-results.index');
     Route::post('/appointments', [AppointmentController::class, 'store'])->name('appointments.store');
-    Route::get('/patient/dashboard', [PatientController::class, 'dashboard'])->name('patient.dashboard');
+    //Route::get('/patient/dashboard', [PatientController::class, 'dashboard'])->name('patient.dashboard');
     Route::get('/patient/services', [App\Http\Controllers\Patient\PrescriptionController::class, 'index'])->name('patient.services.index');
     Route::get('/patient/about', [App\Http\Controllers\Patient\TestResultController::class, 'index'])->name('patient.about.index');
 });
@@ -113,3 +114,5 @@ Route::get('/', 'HomeController@index')->name('home');
 Route::get('/about', 'HomeController@about')->name('about');
 Route::get('/services', 'HomeController@services')->name('services');
 Route::get('/contact', 'HomeController@contact')->name('contact');
+// Add this outside any route group in web.php
+Route::get('/appointments/counts', [App\Http\Controllers\Patient\AppointmentController::class, 'getAppointmentCounts']);

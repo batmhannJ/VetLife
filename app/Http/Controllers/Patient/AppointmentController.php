@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Appointment; // Make sure you have this model
+use Illuminate\Support\Facades\DB;
 
 class AppointmentController extends Controller
 {
@@ -42,7 +43,8 @@ class AppointmentController extends Controller
      */
     public function store(Request $request)
 {
-    \Log::info('Received appointment time: ' . $request->appointment_time);
+    \Log::info('Appointment store method called');
+    \Log::info('Request data:', $request->all());
 
     $request->validate([
         'fullname' => 'required|string|max:255',
@@ -52,13 +54,28 @@ class AppointmentController extends Controller
         'dob' => 'required|date',
         'address' => 'required|string|max:255',
         'ailment' => 'required|string|max:255',
-        'appointment_date' => 'required|date|after:today',    
-        'appointment_time' => 'required', // Validate time
+        'appointment_date' => 'required|date',
+        'appointment_time' => 'required',
         'status' => 'required|string|max:255',
     ]);
 
     try {
-        $appointment = Appointment::create([
+        // Check if there are available slots for this date
+        $date = $request->appointment_date;
+        $appointmentCount = Appointment::whereDate('appointment_date', $date)->count();
+        $maxAppointmentsPerDay = 20;
+        
+        if ($appointmentCount >= $maxAppointmentsPerDay) {
+            $errorMessage = 'No available appointments for this date.';
+            
+            if ($request->ajax()) {
+                return response()->json(['success' => false, 'message' => $errorMessage]);
+            } else {
+                return redirect()->back()->with('error', $errorMessage);
+            }
+        }
+
+        $appointment = new Appointment([
             'user_id' => Auth::id(),
             'fullname' => $request->fullname,
             'email' => $request->email,
@@ -71,14 +88,14 @@ class AppointmentController extends Controller
             'appointment_time' => $request->appointment_time,
             'status' => 'Pending',
         ]);
-          // Debug the appointment object before saving
-          \Log::info('Appointment before save:', $appointment->toArray());
         
-          $appointment->save();
-          
-          // Debug the saved appointment
-          \Log::info('Saved appointment:', Appointment::find($appointment->id)->toArray());
-  
+        // Debug before save
+        \Log::info('Appointment before save:', $appointment->toArray());
+        
+        $appointment->save();
+        
+        // Debug after save
+        \Log::info('Appointment saved with ID: ' . $appointment->id);
 
         if ($request->ajax()) {
             return response()->json(['success' => true]);
@@ -87,6 +104,9 @@ class AppointmentController extends Controller
                 ->with('success', 'Appointment created successfully.');
         }
     } catch (\Exception $e) {
+        \Log::error('Error creating appointment: ' . $e->getMessage());
+        \Log::error($e->getTraceAsString());
+        
         if ($request->ajax()) {
             return response()->json(['success' => false, 'message' => $e->getMessage()]);
         } else {
@@ -94,7 +114,6 @@ class AppointmentController extends Controller
         }
     }
 }
-
     /**
      * Display the specified appointment.
      *
@@ -133,23 +152,21 @@ class AppointmentController extends Controller
     
     public function getAppointmentCounts()
     {
-        // Get the current month start and end dates
-        $startDate = now()->startOfMonth()->subMonth();
-        $endDate = now()->endOfMonth()->addMonth();
+        \Log::info('getAppointmentCounts method called');
 
-        // Query appointments grouped by date
+        // Get all appointments grouped by date
         $appointments = DB::table('appointments')
             ->select(DB::raw('DATE(appointment_date) as date'), DB::raw('COUNT(*) as count'))
-            ->whereBetween('appointment_date', [$startDate, $endDate])
-            ->groupBy(DB::raw('DATE(appointment_date)'))
+            ->groupBy('date')
             ->get();
-
-        // Format the results as a keyed array
-        $results = [];
+        
+        // Convert to the format needed by the calendar
+        $appointmentCounts = [];
         foreach ($appointments as $appointment) {
-            $results[$appointment->date] = $appointment->count;
+            $appointmentCounts[$appointment->date] = (int)$appointment->count;
         }
-
-        return response()->json($results);
+        
+        return response()->json($appointmentCounts);
     }
+
 }
