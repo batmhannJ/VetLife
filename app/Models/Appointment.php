@@ -5,6 +5,9 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
+use App\Patient; // Import the Patient class with its correct namespace
+use App\Models\Doctor; // Assuming Doctor is in the Models folder
+
 class Appointment extends Model
 {
     use HasFactory;
@@ -41,8 +44,15 @@ class Appointment extends Model
     /**
      * Get the doctor for this appointment.
      */
-    public function doctor()
-    {
-        return $this->belongsTo(User::class, 'doctor_id');
-    }
+   // In App\Models\Appointment.php
+
+   public function patient()
+   {
+       return $this->belongsTo(\App\Patient::class);
+   }
+
+   public function doctor()
+   {
+       return $this->belongsTo(Doctor::class);
+   }
 }

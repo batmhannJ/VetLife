@@ -6,6 +6,13 @@
         <!-- Main Content Area -->
         <div class="col-md-10">
             <div class="p-3">
+                <!-- Top User Info -->
+                <div class="d-flex justify-content-between mb-4">
+                    <h2>Appointments</h2>
+                    <div class="user-info">
+                        <span>{{ Auth::user()->name }}</span>
+                    </div>
+                </div>
                 
                 <!-- Tab Navigation -->
                 <ul class="nav nav-tabs" id="appointmentTabs" role="tablist">
@@ -59,52 +66,104 @@
                                 <h5>List of Appointments</h5>
                                 <div class="d-flex justify-content-between align-items-center">
                                     <div>
-                                        Show <select class="form-control form-control-sm d-inline-block w-auto">
-                                            <option>10</option>
-                                            <option>25</option>
-                                            <option>50</option>
-                                        </select> entries
+                                        Show 
+                                        <select class="form-control form-control-sm d-inline-block w-auto" id="entriesPerPage">
+                                            <option value="10">10</option>
+                                            <option value="25">25</option>
+                                            <option value="50">50</option>
+                                        </select> 
+                                        entries
                                     </div>
                                     <div>
-                                        <input type="text" class="form-control form-control-sm" placeholder="Search...">
+                                        <input type="text" class="form-control form-control-sm" id="searchInput" placeholder="Search...">
                                     </div>
                                 </div>
                             </div>
                             <div class="card-body">
-                                <table class="table table-striped">
+                                <table class="table table-striped" id="appointmentsTable">
                                     <thead>
                                         <tr>
                                             <th>#</th>
                                             <th>Date Created</th>
+                                            <th>Appointment Date</th>
                                             <th>Code</th>
-                                            <th>Owner</th>
+                                            <th>Patient</th>
+                                            <th>Ailment</th>
                                             <th>Status</th>
                                             <th>Action</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <!-- If there are appointments, they would be listed here -->
-                                        <!-- Empty state message if no appointments -->
-                                        <tr>
-                                            <td colspan="6" class="text-center">No appointments available at the moment.</td>
-                                        </tr>
+                                        @if(isset($appointments) && count($appointments) > 0)
+                                            @foreach($appointments as $key => $appointment)
+                                                <tr>
+                                                    <td>{{ $key + 1 }}</td>
+                                                    <td>{{ \Carbon\Carbon::parse($appointment->created_at)->format('M d, Y') }}</td>
+                                                    <td>{{ \Carbon\Carbon::parse($appointment->appointment_date)->format('M d, Y g:i A') }}</td>
+                                                    <td>{{ $appointment->code ?? 'APP-' . str_pad($appointment->id, 5, '0', STR_PAD_LEFT) }}</td>
+                                                    <td>{{ $appointment->fullname ?? 'N/A' }}</td> 
+                                                    <td>{{ $appointment->ailment ?? 'N/A' }}</td>    
+                                                    <td>
+                                                    <span class="badge badge-{{ $appointment->status == 'Pending' ? 'warning' : ($appointment->status == 'Approved' ? 'success' : ($appointment->status == 'Completed' ? 'primary' : ($appointment->status == 'Cancelled' ? 'danger' : 'secondary'))) }}">
+                                                        {{ ucfirst($appointment->status) }}
+                                                    </span>
+                                                    </td>
+                                                    <td>
+                                                        <div class="btn-group">
+                                                            <a href="{{ route('admin.appointments.show', $appointment->id) }}" class="btn btn-sm btn-info">
+                                                                <i class="fas fa-eye"></i>
+                                                            </a>
+                                                            <a href="{{ route('admin.appointments.edit', $appointment->id) }}" class="btn btn-sm btn-primary">
+                                                                <i class="fas fa-edit"></i>
+                                                            </a>
+                                                            <button type="button" class="btn btn-sm btn-danger" data-toggle="modal" data-target="#deleteModal{{ $appointment->id }}">
+                                                                <i class="fas fa-trash"></i>
+                                                            </button>
+                                                        </div>
+                                                        <div class="modal fade" id="deleteModal{{ $appointment->id }}" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
+                                                            <div class="modal-dialog" role="document">
+                                                                <div class="modal-content">
+                                                                    <div class="modal-header">
+                                                                        <h5 class="modal-title" id="deleteModalLabel">Confirm Delete</h5>
+                                                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                                            <span aria-hidden="true">&times;</span>
+                                                                        </button>
+                                                                    </div>
+                                                                    <div class="modal-body">
+                                                                        Are you sure you want to delete this appointment?
+                                                                    </div>
+                                                                    <div class="modal-footer">
+                                                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                                                                        <form action="{{ route('admin.appointments.destroy', $appointment->id) }}" method="POST">
+                                                                            @csrf
+                                                                            @method('DELETE')
+                                                                            <button type="submit" class="btn btn-danger">Delete</button>
+                                                                        </form>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            @endforeach
+                                        @else
+                                            <tr>
+                                                <td colspan="8" class="text-center">No appointments available at the moment.</td>
+                                            </tr>
+                                        @endif
                                     </tbody>
                                 </table>
                                 <div class="d-flex justify-content-between align-items-center">
                                     <div>
-                                        Showing 0 to 0 of 0 entries
+                                        @if(isset($appointments) && count($appointments) > 0)
+                                            Showing 1 to {{ count($appointments) }} of {{ count($appointments) }} entries
+                                        @else
+                                            Showing 0 to 0 of 0 entries
+                                        @endif
                                     </div>
                                     <nav>
-                                        <ul class="pagination pagination-sm">
-                                            <li class="page-item disabled">
-                                                <a class="page-link" href="#">Previous</a>
-                                            </li>
-                                            <li class="page-item active">
-                                                <a class="page-link" href="#">1</a>
-                                            </li>
-                                            <li class="page-item disabled">
-                                                <a class="page-link" href="#">Next</a>
-                                            </li>
+                                        <ul class="pagination pagination-sm" id="appointmentPagination">
+                                            <!-- Pagination will be handled by JavaScript -->
                                         </ul>
                                     </nav>
                                 </div>
@@ -167,6 +226,10 @@
     .other-month {
         opacity: 0.5;
     }
+    
+    .btn-group .btn {
+        margin-right: 2px;
+    }
 </style>
 @endsection
 
@@ -178,17 +241,29 @@
         let currentMonth = currentDate.getMonth();
         let currentYear = currentDate.getFullYear();
         
-        // Sample appointments data (you would fetch this from your backend)
-        const sampleAppointments = [
-            { id: 1, title: "Dr. Smith", date: new Date(2024, 2, 15), status: "Confirmed" },
-            { id: 2, title: "Dr. Johnson", date: new Date(2024, 2, 20), status: "Pending" },
-            { id: 3, title: "Dr. Williams", date: new Date(2024, 2, 22), status: "Confirmed" },
-            { id: 4, title: "Dr. Brown", date: new Date(2024, 3, 5), status: "Confirmed" },
-            { id: 5, title: "Dr. Davis", date: new Date(2024, 3, 12), status: "Pending" }
-        ];
+        // Store appointment data after fetching
+        let appointmentData = {};
         
-        // Initialize calendar
-        renderCalendar(currentMonth, currentYear);
+        // Fetch appointment counts from the server
+        function fetchAppointmentCounts() {
+            $.ajax({
+                url: "{{ route('admin.appointment.counts') }}",
+                method: "GET",
+                dataType: "json",
+                success: function(data) {
+                    appointmentData = data;
+                    renderCalendar(currentMonth, currentYear);
+                },
+                error: function(xhr, status, error) {
+                    console.error("Error fetching appointment data:", error);
+                    // Render calendar anyway, but without appointment data
+                    renderCalendar(currentMonth, currentYear);
+                }
+            });
+        }
+        
+        // Initial fetch
+        fetchAppointmentCounts();
         
         // Button event handlers
         $('#prevMonthBtn').click(function() {
@@ -214,6 +289,18 @@
             currentMonth = today.getMonth();
             currentYear = today.getFullYear();
             renderCalendar(currentMonth, currentYear);
+        });
+        
+        $('#monthViewBtn').click(function() {
+            $(this).addClass('active');
+            $('#dayViewBtn').removeClass('active');
+            // Implement month view logic here
+        });
+        
+        $('#dayViewBtn').click(function() {
+            $(this).addClass('active');
+            $('#monthViewBtn').removeClass('active');
+            // Implement day view logic here
         });
         
         // Function to render the calendar
@@ -254,7 +341,7 @@
                         const prevYear = prevMonth === 11 ? year - 1 : year;
                         
                         cell.innerHTML = `<div class="date-number other-month">${prevMonthDay}</div>`;
-                        cell.setAttribute('data-date', `${prevYear}-${prevMonth+1}-${prevMonthDay}`);
+                        cell.setAttribute('data-date', `${prevYear}-${String(prevMonth+1).padStart(2, '0')}-${String(prevMonthDay).padStart(2, '0')}`);
                         
                         // Add any appointments for this date from previous month
                         addAppointmentsToCell(cell, prevYear, prevMonth, prevMonthDay);
@@ -265,7 +352,7 @@
                         const nextYear = nextMonth === 0 ? year + 1 : year;
                         
                         cell.innerHTML = `<div class="date-number other-month">${nextMonthDate}</div>`;
-                        cell.setAttribute('data-date', `${nextYear}-${nextMonth+1}-${nextMonthDate}`);
+                        cell.setAttribute('data-date', `${nextYear}-${String(nextMonth+1).padStart(2, '0')}-${String(nextMonthDate).padStart(2, '0')}`);
                         
                         // Add any appointments for this date from next month
                         addAppointmentsToCell(cell, nextYear, nextMonth, nextMonthDate);
@@ -274,7 +361,7 @@
                     else {
                         // Current month days
                         cell.innerHTML = `<div class="date-number">${date}</div>`;
-                        cell.setAttribute('data-date', `${year}-${month+1}-${date}`);
+                        cell.setAttribute('data-date', `${year}-${String(month+1).padStart(2, '0')}-${String(date).padStart(2, '0')}`);
                         
                         // Highlight today
                         const today = new Date();
@@ -294,41 +381,74 @@
                 $('#calendarBody').append(row);
             }
         }
+
+        function fetchAndDisplayAppointments() {
+            $.ajax({
+                url: "{{ route('admin.appointments.index') }}", // Ensure this route returns the appointments data
+                method: "GET",
+                dataType: "html", // Expect HTML since your view renders the table
+                success: function(data) {
+                    $('#list .card-body').html($(data).find('#appointmentsTable').parent().html()); // Replace the table content
+                },
+                error: function(xhr, status, error) {
+                    console.error("Error fetching appointments:", error);
+                }
+            });
+        }
+
+        $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
+            if ($(e.target).attr('href') === '#list') {
+                fetchAndDisplayAppointments();
+            }
+        });
         
-        // Function to add appointments to a calendar cell
         function addAppointmentsToCell(cell, year, month, day) {
-            // Find appointments for this day
-            const cellDate = new Date(year, month, day);
-            const dayAppointments = sampleAppointments.filter(appointment => 
-                appointment.date.getDate() === cellDate.getDate() && 
-                appointment.date.getMonth() === cellDate.getMonth() && 
-                appointment.date.getFullYear() === cellDate.getFullYear()
-            );
+            // Format the date as YYYY-MM-DD to match the format from the server
+            const formattedMonth = month + 1; // JavaScript months are 0-indexed
+            const paddedMonth = formattedMonth < 10 ? `0${formattedMonth}` : formattedMonth;
+            const paddedDay = day < 10 ? `0${day}` : day;
+            const dateKey = `${year}-${paddedMonth}-${paddedDay}`;
             
-            // Add appointment indicators
-            dayAppointments.forEach(appointment => {
+            // Check if there are appointments for this date
+            if (appointmentData[dateKey] && appointmentData[dateKey] > 0) {
                 const appointmentDiv = document.createElement('div');
                 appointmentDiv.className = 'appointment-indicator';
-                appointmentDiv.textContent = appointment.title;
-                appointmentDiv.setAttribute('data-appointment-id', appointment.id);
                 
-                // Add click handler to show appointment details (implement this based on your needs)
+                // Use actual count from the database
+                const count = appointmentData[dateKey];
+                appointmentDiv.textContent = `${count} appointment${count > 1 ? 's' : ''}`;
+                
+                // Add click handler to show appointment details
                 appointmentDiv.addEventListener('click', function(e) {
                     e.stopPropagation();
-                    alert('Appointment details: ' + appointment.title);
-                    // You could show a modal with appointment details here
+                    
+                    // Redirect to filtered appointments list
+                    window.location.href = `{{ route('admin.appointments.index') }}?date=${dateKey}`;
                 });
                 
                 cell.appendChild(appointmentDiv);
-            });
+            }
             
             // Add click event to the day cell for adding new appointments
             $(cell).click(function() {
                 const clickedDate = $(this).attr('data-date');
-                alert('Add new appointment on ' + clickedDate);
-                // You could show a modal for adding a new appointment here
+                window.location.href = `{{ route('admin.appointments.create') }}?date=${clickedDate}`;
             });
         }
+        
+        // Search functionality
+        $('#searchInput').on('keyup', function() {
+            const value = $(this).val().toLowerCase();
+            $("#appointmentsTable tbody tr").filter(function() {
+                $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+            });
+        });
+        
+        // Entries per page change
+        $('#entriesPerPage').change(function() {
+            const perPage = parseInt($(this).val());
+            // Implement pagination logic here
+        });
     });
 </script>
 @endsection
