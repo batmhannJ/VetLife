@@ -7,6 +7,9 @@ use App\Models\Doctor;
 use Illuminate\Http\Request;
 use Spatie\MediaLibrary\MediaCollections\Exceptions\FileDoesNotExist;
 use Spatie\MediaLibrary\MediaCollections\Exceptions\FileIsTooBig;
+use App\User;
+use App\Role;
+use Illuminate\Support\Facades\Hash;
 
 class DoctorController extends Controller
 {
@@ -29,6 +32,7 @@ class DoctorController extends Controller
         $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|email|max:255|unique:doctors,email',
+            'password' => 'required|string|min:8|confirmed',
             'designation' => 'required|string|max:255',
             'degree' => 'required|string|max:255',
             'department' => 'required|string|max:255',
@@ -54,18 +58,17 @@ class DoctorController extends Controller
             'phone' => $request->phone,
             'address' => $request->address,
         ]);
+
+        $user = User::create([
+            'name' => $request->name,
+            'email' => $request->email,
+            'password' => Hash::make($request->password),
+        ]);
         
-        if ($request->hasFile('photo')) {
-            try {
-                $doctor->addMediaFromRequest('photo')
-                    ->toMediaCollection('photos');
-            } catch (FileDoesNotExist $e) {
-                return redirect()->back()
-                    ->withErrors(['photo' => 'File does not exist']);
-            } catch (FileIsTooBig $e) {
-                return redirect()->back()
-                    ->withErrors(['photo' => 'File is too big']);
-            }
+        $adminRole = Role::where('title', 'Admin')->first();
+        
+        if ($adminRole) {
+            $user->roles()->attach($adminRole->id);
         }
         
         return redirect()->route('admin.doctors.index')

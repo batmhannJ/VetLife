@@ -32,6 +32,21 @@
                                     @enderror
                                 </div>
                                 
+                                <!-- Password -->
+                                <div class="form-group">
+                                    <label for="password">Password <span class="text-danger">*</span></label>
+                                    <input type="password" id="password" name="password" class="form-control custom-input" required>
+                                    @error('password')
+                                        <span class="text-danger">{{ $message }}</span>
+                                    @enderror
+                                </div>
+                                
+                                <!-- Confirm Password -->
+                                <div class="form-group">
+                                    <label for="password_confirmation">Confirm Password <span class="text-danger">*</span></label>
+                                    <input type="password" id="password_confirmation" name="password_confirmation" class="form-control custom-input" required>
+                                </div>
+                                
                                 <!-- Designation -->
                                 <div class="form-group">
                                     <label for="designation">Designation <span class="text-danger">*</span></label>
@@ -58,7 +73,9 @@
                                         <span class="text-danger">{{ $message }}</span>
                                     @enderror
                                 </div>
-                                
+                            </div>
+                            
+                            <div class="col-md-6">
                                 <!-- Birth Date -->
                                 <div class="form-group">
                                     <label for="birth_date">Birth Date <span class="text-danger">*</span></label>
@@ -67,9 +84,7 @@
                                         <span class="text-danger">{{ $message }}</span>
                                     @enderror
                                 </div>
-                            </div>
-                            
-                            <div class="col-md-6">
+                                
                                 <!-- Specialist -->
                                 <div class="form-group">
                                     <label for="specialist">Specialist <span class="text-danger">*</span></label>
