@@ -92,7 +92,7 @@
                     </tr>
                     <tr>
                         <th>
-                            {{ trans('cruds.patient.fields.emergency_contact_name') }}
+                            {{ trans('cruds.patient.fields.pet_name') }}
                         </th>
                         <td>
                             {{ $patient->emergency_contact_name }}
@@ -100,7 +100,7 @@
                     </tr>
                     <tr>
                         <th>
-                            {{ trans('cruds.patient.fields.emergency_contact_relationship') }}
+                            {{ trans('cruds.patient.fields.pet_type') }}
                         </th>
                         <td>
                             {{ $patient->emergency_contact_relationship }}
@@ -108,7 +108,7 @@
                     </tr>
                     <tr>
                         <th>
-                            {{ trans('cruds.patient.fields.emergency_contact_phone') }}
+                            {{ trans('cruds.patient.fields.pet_breed') }}
                         </th>
                         <td>
                             {{ $patient->emergency_contact_phone }}
@@ -116,7 +116,15 @@
                     </tr>
                     <tr>
                         <th>
-                            {{ trans('cruds.patient.fields.emergency_contact_address') }}
+                            {{ trans('cruds.patient.fields.pet_dob') }}
+                        </th>
+                        <td>
+                            {{ $patient->emergency_contact_address }}
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>
+                            {{ trans('cruds.patient.fields.pet_gender') }}
                         </th>
                         <td>
                             {{ $patient->emergency_contact_address }}

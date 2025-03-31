@@ -33,7 +33,6 @@ class StorePatientRequest extends FormRequest
                 'min:1',
                 'max:15',
                 'required',
-                'unique:patients',
             ],
             'phone'       => [
                 'nullable',

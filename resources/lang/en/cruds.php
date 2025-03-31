@@ -147,6 +147,11 @@ return [
             'emergency_contact_relationship_helper' => '',
             'emergency_contact_phone_helper' => '',
             'emergency_contact_address_helper' => '',
+            'pet_name' => 'Pet Name',
+            'pet_type' => 'Pet Type',
+            'pet_breed' => 'Pet Breed',
+            'pet_dob' => 'Pet DoB',
+            'pet_gender' => 'Pet Gender',
         ],
     ],
     'test'              => [

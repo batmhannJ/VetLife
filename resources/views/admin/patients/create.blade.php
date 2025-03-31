@@ -176,69 +176,104 @@
                 </div>
             </div>
 
-            <!-- Emergency Contact Section -->
-            <div class="card mb-4">
-                <div class="card-header bg-light">
-                    <h5 class="mb-0">Emergency Contact</h5>
-                </div>
-                <div class="card-body">
-                    <div class="row">
-                        <!-- Emergency Contact Name -->
-                        <div class="col-md-6">
-                            <div class="form-group {{ $errors->has('emergency_contact_name') ? 'has-error' : '' }}">
-                                <label for="emergency_contact_name">Emergency Contact Name</label>
-                                <input type="text" id="emergency_contact_name" name="emergency_contact_name" class="form-control" value="{{ old('emergency_contact_name', isset($patient) ? $patient->emergency_contact_name : '') }}">
-                                @if($errors->has('emergency_contact_name'))
-                                    <p class="help-block text-danger">
-                                        {{ $errors->first('emergency_contact_name') }}
-                                    </p>
-                                @endif
-                            </div>
-                        </div>
-                        
-                        <!-- Emergency Contact Relationship -->
-                        <div class="col-md-6">
-                            <div class="form-group {{ $errors->has('emergency_contact_relationship') ? 'has-error' : '' }}">
-                                <label for="emergency_contact_relationship">Relationship</label>
-                                <input type="text" id="emergency_contact_relationship" name="emergency_contact_relationship" class="form-control" value="{{ old('emergency_contact_relationship', isset($patient) ? $patient->emergency_contact_relationship : '') }}">
-                                @if($errors->has('emergency_contact_relationship'))
-                                    <p class="help-block text-danger">
-                                        {{ $errors->first('emergency_contact_relationship') }}
-                                    </p>
-                                @endif
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="row">
-                        <!-- Emergency Contact Phone -->
-                        <div class="col-md-6">
-                            <div class="form-group {{ $errors->has('emergency_contact_phone') ? 'has-error' : '' }}">
-                                <label for="emergency_contact_phone">Emergency Contact Phone</label>
-                                <input type="text" id="emergency_contact_phone" name="emergency_contact_phone" class="form-control" value="{{ old('emergency_contact_phone', isset($patient) ? $patient->emergency_contact_phone : '') }}">
-                                @if($errors->has('emergency_contact_phone'))
-                                    <p class="help-block text-danger">
-                                        {{ $errors->first('emergency_contact_phone') }}
-                                    </p>
-                                @endif
-                            </div>
-                        </div>
-                        
-                        <!-- Emergency Contact Address -->
-                        <div class="col-md-6">
-                            <div class="form-group {{ $errors->has('emergency_contact_address') ? 'has-error' : '' }}">
-                                <label for="emergency_contact_address">Emergency Contact Address</label>
-                                <input type="text" id="emergency_contact_address" name="emergency_contact_address" class="form-control" value="{{ old('emergency_contact_address', isset($patient) ? $patient->emergency_contact_address : '') }}">
-                                @if($errors->has('emergency_contact_address'))
-                                    <p class="help-block text-danger">
-                                        {{ $errors->first('emergency_contact_address') }}
-                                    </p>
-                                @endif
-                            </div>
-                        </div>
-                    </div>
+            <!-- Pet Information Section -->
+<div class="card mb-4">
+    <div class="card-header bg-light">
+        <h5 class="mb-0">Pet Information</h5>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <!-- Pet Name -->
+            <div class="col-md-6">
+                <div class="form-group {{ $errors->has('pet_name') ? 'has-error' : '' }}">
+                    <label for="pet_name">Pet Name*</label>
+                    <input type="text" id="pet_name" name="pet_name" class="form-control" value="{{ old('pet_name', isset($patient) ? $patient->pet_name : '') }}" required>
+                    @if($errors->has('pet_name'))
+                        <p class="help-block text-danger">
+                            {{ $errors->first('pet_name') }}
+                        </p>
+                    @endif
                 </div>
             </div>
+            
+            <!-- Type of Animal -->
+            <div class="col-md-6">
+                <div class="form-group {{ $errors->has('pet_type') ? 'has-error' : '' }}">
+                    <label for="pet_type">Type of Animal*</label>
+                    <select id="pet_type" name="pet_type" class="form-control" required>
+                        <option value="" disabled {{ old('pet_type', null) === null ? 'selected' : '' }}>{{ trans('global.pleaseSelect') }}</option>
+                        <option value="dog" {{ old('pet_type') === 'dog' ? 'selected' : '' }}>Dog</option>
+                        <option value="cat" {{ old('pet_type') === 'cat' ? 'selected' : '' }}>Cat</option>
+                        <option value="bird" {{ old('pet_type') === 'bird' ? 'selected' : '' }}>Bird</option>
+                        <option value="rabbit" {{ old('pet_type') === 'rabbit' ? 'selected' : '' }}>Rabbit</option>
+                        <option value="hamster" {{ old('pet_type') === 'hamster' ? 'selected' : '' }}>Hamster</option>
+                        <option value="other" {{ old('pet_type') === 'other' ? 'selected' : '' }}>Other</option>
+                    </select>
+                    @if($errors->has('pet_type'))
+                        <p class="help-block text-danger">
+                            {{ $errors->first('pet_type') }}
+                        </p>
+                    @endif
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <!-- Breed -->
+            <div class="col-md-6">
+                <div class="form-group {{ $errors->has('pet_breed') ? 'has-error' : '' }}">
+                    <label for="pet_breed">Breed</label>
+                    <input type="text" id="pet_breed" name="pet_breed" class="form-control" value="{{ old('pet_breed', isset($patient) ? $patient->pet_breed : '') }}">
+                    @if($errors->has('pet_breed'))
+                        <p class="help-block text-danger">
+                            {{ $errors->first('pet_breed') }}
+                        </p>
+                    @endif
+                </div>
+            </div>
+            
+            <!-- Pet Date of Birth -->
+            <div class="col-md-6">
+                <div class="form-group {{ $errors->has('pet_dob') ? 'has-error' : '' }}">
+                    <label for="pet_dob">Pet Date of Birth</label>
+                    <input type="text" id="pet_dob" name="pet_dob" class="form-control date" value="{{ old('pet_dob', isset($patient) ? $patient->pet_dob : '') }}">
+                    @if($errors->has('pet_dob'))
+                        <p class="help-block text-danger">
+                            {{ $errors->first('pet_dob') }}
+                        </p>
+                    @endif
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <!-- Pet Age (Auto-calculated) -->
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label for="pet_age">Pet Age</label>
+                    <input type="text" id="pet_age" class="form-control" readonly>
+                </div>
+            </div>
+            
+            <!-- Pet Gender -->
+            <div class="col-md-6">
+                <div class="form-group {{ $errors->has('pet_gender') ? 'has-error' : '' }}">
+                    <label for="pet_gender">Pet Gender</label>
+                    <select id="pet_gender" name="pet_gender" class="form-control">
+                        <option value="" disabled {{ old('pet_gender', null) === null ? 'selected' : '' }}>{{ trans('global.pleaseSelect') }}</option>
+                        <option value="male" {{ old('pet_gender') === 'male' ? 'selected' : '' }}>Male</option>
+                        <option value="female" {{ old('pet_gender') === 'female' ? 'selected' : '' }}>Female</option>
+                    </select>
+                    @if($errors->has('pet_gender'))
+                        <p class="help-block text-danger">
+                            {{ $errors->first('pet_gender') }}
+                        </p>
+                    @endif
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
             <div>
                 <input class="btn btn-primary" type="submit" value="{{ trans('global.save') }}">
@@ -249,6 +284,23 @@
 @endsection
 @section('scripts')
 <script>
+
+    // Calculate pet age based on date of birth
+$('#pet_dob').change(function() {
+    const petDob = $(this).val();
+    if (petDob) {
+        const petAge = calculateAge(petDob);
+        $('#pet_age').val(petAge);
+    } else {
+        $('#pet_age').val('');
+    }
+});
+
+// If pet_dob is already filled (in case of edit), calculate age on page load
+if ($('#pet_dob').val()) {
+    const petAge = calculateAge($('#pet_dob').val());
+    $('#pet_age').val(petAge);
+}
     Dropzone.options.photoDropzone = {
         url: '{{ route('admin.patients.storeMedia') }}',
         maxFilesize: 4, // MB

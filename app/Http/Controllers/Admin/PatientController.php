@@ -45,10 +45,11 @@ class PatientController extends Controller
         'address' => $request->input('address'),
         'pin_code' => $request->input('pin_code'),
         'blood_group' => $request->input('blood_group'),
-        'emergency_contact_name' => $request->input('emergency_contact_name'),
-        'emergency_contact_relationship' => $request->input('emergency_contact_relationship'),
-        'emergency_contact_phone' => $request->input('emergency_contact_phone'),
-        'emergency_contact_address' => $request->input('emergency_contact_address'),
+        'pet_name' => $request->input('pet_name'),
+        'pet_type' => $request->input('pet_type'),
+        'pet_breed' => $request->input('pet_breed'),
+        'pet_dob' => $request->input('pet_dob'),
+        'pet_gender' => $request->input('pet_gender'),
     ]);
 
     // Handle photo upload
