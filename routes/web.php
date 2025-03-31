@@ -4,6 +4,7 @@ use App\Http\Controllers\Patient\AppointmentController;
 use App\Http\Controllers\Admin\AppointmentController as AdminAppointmentController;
 use App\Http\Controllers\Admin\PaymentController;
 use App\Http\Controllers\Admin\ScheduleController;
+use App\Http\Controllers\Admin\ServiceController;
 
 Route::redirect('/', '/login');
 Route::get('/home', function () {
@@ -89,8 +90,10 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'mi
     Route::resource('categories', 'CategoryController');
     //Service
     Route::get('/services', 'App\Http\Controllers\Admin\ServiceController@index');
-    Route::resource('services', 'ServiceController');
-
+    //Route::resource('services', 'ServiceController');
+    Route::get('/services', [ServiceController::class, 'index'])->name('services.index');
+    Route::get('/services/create', [ServiceController::class, 'create'])->name('services.create');
+    Route::resource('services', ServiceController::class);
     //Appointment
     Route::get('appointment-counts', 'AppointmentController@getAppointmentCounts')->name('appointment.counts');
         // Inside the admin routes group

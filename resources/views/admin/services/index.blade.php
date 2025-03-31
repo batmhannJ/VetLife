@@ -12,21 +12,35 @@
                 
                 <div class="settings-body">
                     <div class="table-responsive">
-                        <div class="d-flex justify-content-between align-items-center mb-3">
-                            <div class="show-entries">
-                                Show 
-                                <select class="entries-select">
-                                    <option value="5" selected>5</option>
-                                    <option value="10">10</option>
-                                    <option value="25">25</option>
-                                    <option value="50">50</option>
-                                </select>
-                                entries
-                            </div>
-                            <div class="search-container">
-                                <input type="text" class="form-control search-input" placeholder="Search...">
-                            </div>
-                        </div>
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+    <div class="show-entries">
+        Show 
+        <select class="entries-select">
+            <option value="5" selected>5</option>
+            <option value="10">10</option>
+            <option value="25">25</option>
+            <option value="50">50</option>
+        </select>
+        entries
+    </div>
+
+    <!-- Filter Dropdown -->
+    <form method="GET" action="{{ route('admin.services.index') }}" class="mb-3">
+    <label for="animal_type">Filter by Animal Type:</label>
+    <select name="animal_type" id="animal_type" class="entries-select" onchange="this.form.submit()">
+        <option value="">All</option>
+        <option value="Dog" {{ request('animal_type') == 'Dog' ? 'selected' : '' }}>Dog</option>
+        <option value="Cat" {{ request('animal_type') == 'Cat' ? 'selected' : '' }}>Cat</option>
+        <option value="Bird" {{ request('animal_type') == 'Bird' ? 'selected' : '' }}>Bird</option>
+    </select>
+</form>
+
+
+    <div class="search-container">
+        <input type="text" class="form-control search-input" placeholder="Search...">
+    </div>
+</div>
+
                         
                         <table class="table table-hover">
                             <thead>

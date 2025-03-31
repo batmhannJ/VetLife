@@ -9,41 +9,48 @@ use App\Models\Category;
 
 class ServiceController extends Controller
 {
-    public function index()
-    {
-        $services = Service::orderBy('created_at', 'desc')->paginate(5);
-        $categories = Category::all();
-        
-        return view('admin.services.index', compact('services', 'categories'));
+    public function index(Request $request)
+{
+    $query = Service::query();
+
+    if ($request->has('animal_type') && !empty($request->animal_type)) {
+        $query->where('animal_type', $request->animal_type);
     }
+
+    $services = $query->paginate(10);
+
+    return view('admin.services.index', compact('services'));
+}
+
     
-    public function create()
-    {
-        $categories = Category::all();
-        return view('admin.services.create', compact('categories'));
-    }
+public function create()
+{
+    return view('admin.services.create');
+}
     
-    public function store(Request $request)
-    {
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'description' => 'nullable|string',
-            'category_id' => 'required|exists:categories,id',
-            'price' => 'required|numeric|min:0',
-            'for' => 'required|string|max:255',
-        ]);
-        
-        Service::create([
-            'name' => $request->name,
-            'description' => $request->description,
-            'category_id' => $request->category_id,
-            'price' => $request->price,
-            'for' => $request->for,
-        ]);
-        
-        return redirect()->route('admin.services.index')
-            ->with('success', 'Service created successfully');
-    }
+public function store(Request $request)
+{
+    // Validate Input
+    $request->validate([
+        'name' => 'required|string|max:255',
+        'description' => 'required|string',
+        'price' => 'required|numeric|min:0',
+        'animal_type' => 'required|string|in:Dog,Cat,Bird',
+        'active' => 'required|boolean',
+    ]);
+
+    // Save to Database
+    Service::create([
+        'name' => $request->name,
+        'description' => $request->description,
+        'price' => $request->price,
+        'animal_type' => $request->animal_type,
+        'active' => $request->active,
+    ]);
+
+    // Redirect with Success Message
+    return redirect()->route('admin.services.index')->with('success', 'Service added successfully!');
+}
     
     public function edit(Service $service)
     {
