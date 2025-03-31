@@ -36,48 +36,33 @@
             </div>
 
             <table class="table table-bordered">
-                <thead>
-                    <tr>
-                        <th width="5%">
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox">
-                            </div>
-                        </th>
-                        <th>Date Created</th>
-                        <th>Name</th>
-                        <th>Action</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach($categories as $key => $category)
-                    <tr>
-                        <td>
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox">
-                            </div>
-                        </td>
-                        <td>{{ $category->created_at->format('Y-m-d H:i:s') }}</td>
-                        <td>{{ $category->name }}</td>
-                        <td>
-                            <div class="dropdown">
-                                <button class="btn btn-sm btn-secondary dropdown-toggle" type="button" id="actionDropdown{{ $key }}" data-bs-toggle="dropdown" aria-expanded="false">
-                                    Action
-                                </button>
-                                <ul class="dropdown-menu" aria-labelledby="actionDropdown{{ $key }}">
-                                    <li><a class="dropdown-item" href="{{ route('admin.categories.edit', $category->id) }}">Edit</a></li>
-                                    <li>
-                                        <form action="{{ route('admin.categories.destroy', $category->id) }}" method="POST">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit" class="dropdown-item" onclick="return confirm('Are you sure?')">Delete</button>
-                                        </form>
-                                    </li>
-                                </ul>
-                            </div>
-                        </td>
-                    </tr>
-                    @endforeach
-                </tbody>
+            <thead>
+    <tr>
+    <th>No.</th>
+        <th>Date Created</th>
+        <th>Animal Type</th> <!-- Bagong Column -->
+        <th>Action</th>
+    </tr>
+</thead>
+<tbody>
+    @foreach($categories as $key => $category)
+    <tr>
+        <td>{{ $loop->iteration }}</td> <!-- Auto-increment display number -->
+        <td>{{ $category->created_at->format('Y-m-d H:i:s') }}</td>
+        <td>{{ $category->animal_type }}</td> <!-- Ipakita ang Animal Type -->
+        <td>
+            <a href="{{ route('admin.categories.edit', $category->id) }}" class="btn btn-sm btn-warning">Edit</a>
+            <form action="{{ route('admin.categories.destroy', $category->id) }}" method="POST" class="d-inline">
+                @csrf
+                @method('DELETE')
+                <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure?')">Delete</button>
+            </form>
+        </td>
+    </tr>
+    @endforeach
+</tbody>
+
+
             </table>
 
             <div class="d-flex justify-content-between align-items-center mt-3">
