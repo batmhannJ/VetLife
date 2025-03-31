@@ -10,38 +10,38 @@
                 </div>
                 
                 <div class="settings-body">
-                    <form method="POST" action="{{ route('admin.schedules.settings.update') }}">
-                        @csrf
+                <form method="POST" action="{{ route('admin.schedules.saveSettings') }}">
+                @csrf
                         <div class="row">
                             <div class="col-md-5">
                                 <h6 class="section-title">Weekly Schedule</h6>
                                 <div class="weekly-checkboxes">
                                     <div class="custom-checkbox-container">
-                                        <input type="checkbox" id="sunday" name="days[]" value="Sunday">
+                                        <input type="checkbox" id="sunday" name="day[]" value="Sunday">
                                         <label for="sunday">Sunday</label>
                                     </div>
                                     <div class="custom-checkbox-container">
-                                        <input type="checkbox" id="monday" name="days[]" value="Monday" checked>
+                                        <input type="checkbox" id="monday" name="day[]" value="Monday" checked>
                                         <label for="monday">Monday</label>
                                     </div>
                                     <div class="custom-checkbox-container">
-                                        <input type="checkbox" id="tuesday" name="days[]" value="Tuesday" checked>
+                                        <input type="checkbox" id="tuesday" name="day[]" value="Tuesday" checked>
                                         <label for="tuesday">Tuesday</label>
                                     </div>
                                     <div class="custom-checkbox-container">
-                                        <input type="checkbox" id="wednesday" name="days[]" value="Wednesday" checked>
+                                        <input type="checkbox" id="wednesday" name="day[]" value="Wednesday" checked>
                                         <label for="wednesday">Wednesday</label>
                                     </div>
                                     <div class="custom-checkbox-container">
-                                        <input type="checkbox" id="thursday" name="days[]" value="Thursday" checked>
+                                        <input type="checkbox" id="thursday" name="day[]" value="Thursday" checked>
                                         <label for="thursday">Thursday</label>
                                     </div>
                                     <div class="custom-checkbox-container">
-                                        <input type="checkbox" id="friday" name="days[]" value="Friday" checked>
+                                        <input type="checkbox" id="friday" name="day[]" value="Friday" checked>
                                         <label for="friday">Friday</label>
                                     </div>
                                     <div class="custom-checkbox-container">
-                                        <input type="checkbox" id="saturday" name="days[]" value="Saturday">
+                                        <input type="checkbox" id="saturday" name="day[]" value="Saturday">
                                         <label for="saturday">Saturday</label>
                                     </div>
                                 </div>

@@ -3,6 +3,7 @@
 use App\Http\Controllers\Patient\AppointmentController;
 use App\Http\Controllers\Admin\AppointmentController as AdminAppointmentController;
 use App\Http\Controllers\Admin\PaymentController;
+use App\Http\Controllers\Admin\ScheduleController;
 
 Route::redirect('/', '/login');
 Route::get('/home', function () {
@@ -58,6 +59,8 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'mi
         Route::post('/', 'ScheduleController@store')->name('store');
     });
 
+    Route::post('schedules/settings', [ScheduleController::class, 'saveSettings'])->name('schedules.saveSettings');
+
     // Reports
     Route::delete('reports/destroy', 'ReportController@massDestroy')->name('reports.massDestroy');
     Route::resource('reports', 'ReportController');
@@ -74,7 +77,7 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'mi
     Route::get('payments', 'PaymentController@index')->name('payments.index');
     Route::get('payments/setup', 'PaymentController@setup')->name('payments.setup');
     Route::post('payments/store', 'PaymentController@store')->name('payments.store');
-    Route::get('ayments/setup', [PaymentController::class, 'setup'])->name('payments.setup');
+    Route::get('payments/setup', [PaymentController::class, 'setup'])->name('payments.setup');
 
     //Gateway
     Route::get('gateway', 'GatewayController@index')->name('gateway.index');
@@ -120,6 +123,10 @@ Route::group(['prefix' => 'patient', 'as' => 'patient.', 'namespace' => 'Patient
     //Route::get('/patient/dashboard', [PatientController::class, 'dashboard'])->name('patient.dashboard');
     Route::get('/patient/services', [App\Http\Controllers\Patient\PrescriptionController::class, 'index'])->name('patient.services.index');
     Route::get('/patient/about', [App\Http\Controllers\Patient\TestResultController::class, 'index'])->name('patient.about.index');
+});
+
+Route::middleware(['auth:web'])->group(function () {
+    Route::post('/save-settings', 'AdminController@saveSettings');
 });
 
 
