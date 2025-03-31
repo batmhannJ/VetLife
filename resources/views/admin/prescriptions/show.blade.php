@@ -68,14 +68,6 @@
                             {{ $prescription->updated_at }}
                         </td>
                     </tr>
-                    <tr>
-                        <th>
-                            {{ trans('cruds.prescription.fields.deleted_at') }}
-                        </th>
-                        <td>
-                            {{ $prescription->deleted_at }}
-                        </td>
-                    </tr>
                 </tbody>
             </table>
             <a style="margin-top:20px;" class="btn btn-default" href="{{ url()->previous() }}">

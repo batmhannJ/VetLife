@@ -47,9 +47,6 @@
                             {{ trans('cruds.prescription.fields.updated_at') }}
                         </th>
                         <th>
-                            {{ trans('cruds.prescription.fields.deleted_at') }}
-                        </th>
-                        <th>
                             &nbsp;
                         </th>
                     </tr>
@@ -85,9 +82,6 @@
                             </td>
                             <td>
                                 {{ $prescription->updated_at ?? '' }}
-                            </td>
-                            <td>
-                                {{ $prescription->deleted_at ?? '' }}
                             </td>
                             <td>
                                 @can('prescription_show')

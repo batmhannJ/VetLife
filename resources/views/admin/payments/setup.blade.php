@@ -1,55 +1,36 @@
 @extends('layouts.admin')
 
 @section('content')
-<div class="container-fluid">
-    <div class="row">
-        <!-- Main Content Area -->
-        <div class="col-md-10 ml-auto">
-            <div class="p-3">
-                <!-- Card with Payment Form -->
-                <div class="card">
-                    <div class="card-header bg-white d-flex justify-content-between align-items-center">
-                        <div class="d-flex align-items-center">
-                            <div class="rounded-circle bg-light p-2 mr-3">
-                                <i class="fas fa-credit-card text-dark"></i>
-                            </div>
-                            <div>
-                                <h5 class="mb-0">Setup Payment Method</h5>
-                                <small class="text-muted">Setup Payment Method</small>
-                            </div>
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow-lg rounded">
+                <div class="card-header bg-primary text-white text-center">
+                    <h4><i class="fas fa-wallet"></i> Setup Payment Method</h4>
+                </div>
+                <div class="card-body">
+                    <form action="{{ route('admin.payments.store') }}" method="POST">
+                        @csrf
+                        <div class="mb-3">
+                            <label for="paypal_email" class="form-label">Paypal Business Email</label>
+                            <input type="email" class="form-control" id="paypal_email" name="paypal_email" value="{{ old('paypal_email') }}" required>
                         </div>
-                        <a href="#" class="text-decoration-none">Dashboard</a>
-                    </div>
-                    <div class="card-body">
-                        <form>
-                            <div class="form-group row">
-                                <label for="paypalEmail" class="col-sm-3 col-form-label text-right">Paypal Business Email</label>
-                                <div class="col-sm-9">
-                                    <input type="email" class="form-control" id="paypalEmail" value="email@gmail.com">
-                                </div>
-                            </div>
-                            
-                            <div class="form-group row">
-                                <label for="amount" class="col-sm-3 col-form-label text-right">Amount</label>
-                                <div class="col-sm-9">
-                                    <input type="number" class="form-control" id="amount" value="25">
-                                </div>
-                            </div>
-                            
-                            <div class="form-group row">
-                                <div class="col-sm-9 offset-sm-3">
-                                    <button type="button" class="btn btn-danger mr-2">Reset</button>
-                                    <button type="submit" class="btn btn-primary">Submit</button>
-                                </div>
-                            </div>
-                        </form>
-                    </div>
+                        <div class="mb-3">
+                            <label for="amount" class="form-label">Amount</label>
+                            <input type="number" class="form-control" id="amount" name="amount" value="{{ old('amount') }}" required>
+                        </div>
+                        <div class="d-flex justify-content-between">
+                            <button type="reset" class="btn btn-outline-danger">Reset</button>
+                            <button type="submit" class="btn btn-primary">Submit</button>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>
     </div>
 </div>
 @endsection
+
 
 @section('styles')
 <style>

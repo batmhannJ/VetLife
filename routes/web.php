@@ -2,6 +2,7 @@
 <?php
 use App\Http\Controllers\Patient\AppointmentController;
 use App\Http\Controllers\Admin\AppointmentController as AdminAppointmentController;
+use App\Http\Controllers\Admin\PaymentController;
 
 Route::redirect('/', '/login');
 Route::get('/home', function () {
@@ -72,6 +73,8 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'mi
     //Payments
     Route::get('payments', 'PaymentController@index')->name('payments.index');
     Route::get('payments/setup', 'PaymentController@setup')->name('payments.setup');
+    Route::post('payments/store', 'PaymentController@store')->name('payments.store');
+    Route::get('ayments/setup', [PaymentController::class, 'setup'])->name('payments.setup');
 
     //Gateway
     Route::get('gateway', 'GatewayController@index')->name('gateway.index');
