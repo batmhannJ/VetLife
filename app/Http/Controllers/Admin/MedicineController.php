@@ -14,13 +14,22 @@ use Symfony\Component\HttpFoundation\Response;
 class MedicineController extends Controller
 {
     public function index()
-    {
-        abort_if(Gate::denies('medicine_access'), Response::HTTP_FORBIDDEN, '403 Forbidden');
+{
+    $medicines = Medicine::with(['prescriptions'])
+        ->get()
+        ->map(function ($medicine) {
+            // Kunin ang total quantity issued mula sa prescriptions table
+            $totalIssued = $medicine->prescriptions->sum('quantity_issued');
 
-        $medicines = Medicine::all();
+            // Kalkulahin ang natitirang stock
+            $medicine->uos = max($medicine->qty_received - $totalIssued, 0);
 
-        return view('admin.medicines.index', compact('medicines'));
-    }
+            return $medicine;
+        });
+
+    return view('admin.medicines.index', compact('medicines'));
+}
+
 
     public function create()
     {

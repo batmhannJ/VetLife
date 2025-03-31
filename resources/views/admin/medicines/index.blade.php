@@ -79,7 +79,7 @@
                                 {{ App\Medicine::TYPE_SELECT[$medicine->type] ?? '' }}
                             </td>
                             <td>
-                                {{ $medicine->uos ?? '' }}
+                                {{ $medicine->uos ?? '0' }}
                             </td>
                             <td>
                                 {{ $medicine->received_from ?? '' }}

@@ -128,7 +128,7 @@
                     <a class="nav-link nav-dropdown-toggle" href="#">
                         <i class="fa-fw fas fa-database"></i>
                         <p>
-                            <span>Setup Data</span>
+                            <span>Setup Medicine</span>
                             <i class="right fa fa-fw fa-angle-left"></i>
                         </p>
                     </a>
