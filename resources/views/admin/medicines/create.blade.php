@@ -59,7 +59,7 @@
                     </p>
                 @endif
             </div>
-            <div class="form-group {{ $errors->has('uos') ? 'has-error' : '' }}">
+            <!--<div class="form-group {{ $errors->has('uos') ? 'has-error' : '' }}">
                 <label for="uos">{{ trans('cruds.medicine.fields.uos') }}*</label>
                 <input type="text" id="uos" name="uos" class="form-control" value="{{ old('uos', isset($medicine) ? $medicine->uos : '') }}" required>
                 @if($errors->has('uos'))
@@ -70,7 +70,7 @@
                 <p class="helper-block">
                     {{ trans('cruds.medicine.fields.uos_helper') }}
                 </p>
-            </div>
+            </div>-->
             <div class="form-group {{ $errors->has('received_from') ? 'has-error' : '' }}">
                 <label for="received_from">{{ trans('cruds.medicine.fields.received_from') }}*</label>
                 <input type="text" id="received_from" name="received_from" class="form-control" value="{{ old('received_from', isset($medicine) ? $medicine->received_from : '') }}" required>

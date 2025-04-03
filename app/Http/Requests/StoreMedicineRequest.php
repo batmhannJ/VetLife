@@ -31,7 +31,7 @@ class StoreMedicineRequest extends FormRequest
                 'required',
             ],
             'uos'           => [
-                'required',
+
             ],
             'received_from' => [
                 'required',

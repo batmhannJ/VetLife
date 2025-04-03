@@ -1,13 +1,19 @@
 @extends('layouts.admin')
 
 @section('content')
+@can('prescription_create')
+    <div style="margin-bottom: 10px;" class="row">
+        <div class="col-lg-12">
+            <a class="btn btn-success" href="{{ route("admin.categories.create") }}">
+                {{ trans('global.add') }} {{ trans('cruds.categories.title_singular') }}
+            </a>
+        </div>
+    </div>
+@endcan
 <div class="container-fluid">
     <div class="card">
         <div class="card-header d-flex justify-content-between align-items-center">
             <h5 class="mb-0">List of Category (Per Name)</h5>
-            <a href="{{ route('admin.categories.create') }}" class="btn btn-sm btn-primary">
-                <i class="fas fa-plus"></i> Add New
-            </a>
         </div>
 
         <div class="card-body">

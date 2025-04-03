@@ -40,8 +40,15 @@ class MedicineController extends Controller
 
     public function store(StoreMedicineRequest $request)
     {
-        $medicine = Medicine::create($request->all());
-
+        $data = $request->all();
+        
+        // Set uos equal to qty_received initially
+        if (isset($data['qty_received'])) {
+            $data['uos'] = $data['qty_received'];
+        }
+        
+        $medicine = Medicine::create($data);
+    
         return redirect()->route('admin.medicines.index');
     }
 
@@ -53,11 +60,22 @@ class MedicineController extends Controller
     }
 
     public function update(UpdateMedicineRequest $request, Medicine $medicine)
-    {
-        $medicine->update($request->all());
-
-        return redirect()->route('admin.medicines.index');
+{
+    $data = $request->all();
+    
+    // If qty_received is being updated, adjust uos accordingly
+    if (isset($data['qty_received'])) {
+        // Get current total issued
+        $totalIssued = $medicine->prescriptions->sum('quantity_issued');
+        
+        // Calculate new uos value
+        $data['uos'] = max($data['qty_received'] - $totalIssued, 0);
     }
+    
+    $medicine->update($data);
+
+    return redirect()->route('admin.medicines.index');
+}
 
     public function show(Medicine $medicine)
     {

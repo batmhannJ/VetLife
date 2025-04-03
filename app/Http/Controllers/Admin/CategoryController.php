@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Category; // Make sure you have this model
+use Illuminate\Support\Facades\Gate;
+use Symfony\Component\HttpFoundation\Response;
 
 class CategoryController extends Controller
 {
@@ -36,17 +38,29 @@ class CategoryController extends Controller
     public function update(Request $request, $id)
     {
         $request->validate([
-            'name' => 'required|string|max:255',
             'animal_type' => 'required|string|max:255',
+            'description' => 'string',
         ]);
     
         $category = Category::findOrFail($id);
         $category->update([
-            'name' => $request->name,
             'animal_type' => $request->animal_type,
+            'description' => $request->description,
         ]);
     
         return redirect()->route('admin.categories.index')->with('status', 'Category updated successfully!');
+    }
+
+    public function destroy(Category $category)
+    {
+        $category->delete();
+
+        return back();
+    }
+
+    public function edit(Category $category)
+    {
+        return view('admin.categories.edit', compact('category'));
     }
     
 }

@@ -113,6 +113,18 @@
                     </div>
 
                     <div class="row">
+                        <!-- Zip Code -->
+                        <div class="col-md-4">
+                            <div class="form-group {{ $errors->has('zip_code') ? 'has-error' : '' }}">
+                                <label for="zip_code">Pin Code</label>
+                                <input type="text" id="pin_code" name="pin_code" class="form-control" value="{{ old('pin_code', isset($patient) ? $patient->pin_code : '') }}">
+                                @if($errors->has('pin_code'))
+                                    <p class="help-block text-danger">
+                                        {{ $errors->first('pin_code') }}
+                                    </p>
+                                @endif
+                            </div>
+                        </div>
                         <!-- Address -->
                         <div class="col-md-8">
                             <div class="form-group {{ $errors->has('address') ? 'has-error' : '' }}">
@@ -121,19 +133,6 @@
                                 @if($errors->has('address'))
                                     <p class="help-block text-danger">
                                         {{ $errors->first('address') }}
-                                    </p>
-                                @endif
-                            </div>
-                        </div>
-                        
-                        <!-- Zip Code -->
-                        <div class="col-md-4">
-                            <div class="form-group {{ $errors->has('zip_code') ? 'has-error' : '' }}">
-                                <label for="zip_code">Zip Code</label>
-                                <input type="text" id="pin_code" name="pin_code" class="form-control" value="{{ old('pin_code', isset($patient) ? $patient->pin_code : '') }}">
-                                @if($errors->has('pin_code'))
-                                    <p class="help-block text-danger">
-                                        {{ $errors->first('pin_code') }}
                                     </p>
                                 @endif
                             </div>

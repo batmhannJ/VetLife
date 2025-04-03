@@ -31,7 +31,7 @@
                         <th>{{ trans('cruds.doctor.fields.service_place') }}</th>
                         <th>{{ trans('cruds.doctor.fields.phone') }}</th>
                         <th>{{ trans('cruds.doctor.fields.email') }}</th>
-                        <th>Actions</th>
+                        <!--<th>Actions</th>--> 
                     </tr>
                 </thead>
                 <tbody>
@@ -49,7 +49,7 @@
                             <td>{{ $doctor->service_place ?? '' }}</td>
                             <td>{{ $doctor->phone ?? '' }}</td>
                             <td>{{ $doctor->email ?? '' }}</td>
-                            <td>
+                            <!--<td>
                                 @can('doctor_show')
                                     <a class="btn btn-xs btn-primary" href="{{ route('admin.doctors.show', $doctor->id) }}">
                                         {{ trans('global.view') }}
@@ -69,7 +69,7 @@
                                         <input type="submit" class="btn btn-xs btn-danger" value="{{ trans('global.delete') }}">
                                     </form>
                                 @endcan
-                            </td>
+                            </td>-->
                         </tr>
                     @endforeach
                 </tbody>
