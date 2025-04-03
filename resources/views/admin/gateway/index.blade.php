@@ -2,59 +2,47 @@
 
 @section('content')
 <div class="container-fluid">
-    <div class="row">
-        <!-- Main Content Area -->
-        <div class="col-md-10 ml-auto">
-            <div class="p-3">
-                <!-- Card with Gateway Setup Form -->
-                <div class="card">
-                    <div class="card-header bg-white d-flex justify-content-between align-items-center">
-                        <div class="d-flex align-items-center">
-                            <div class="rounded-circle bg-light p-2 mr-3">
-                                <i class="fas fa-sms text-dark"></i>
-                            </div>
-                            <div>
-                                <h5 class="mb-0">Gateway Setup</h5>
-                                <small class="text-muted">Gateway Setup</small>
-                            </div>
-                        </div>
-                        <a href="#" class="btn btn-sm btn-light">Dashboard</a>
-                    </div>
-                    <div class="card-body">
-                        <div class="table-responsive">
-                            <table class="table">
-                                <thead>
-                                    <tr>
-                                        <th>Status</th>
-                                        <th>Provider</th>
-                                        <th>User Name</th>
-                                        <th>Password</th>
-                                        <th>Sender</th>
-                                        <th>Action</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <td>
-                                            <div class="form-check">
-                                                <input class="form-check-input" type="radio" name="status" id="status1" checked>
-                                            </div>
-                                        </td>
-                                        <td>Nexmo</td>
-                                        <td>admin</td>
-                                        <td>*****</td>
-                                        <td>GLOW-VETLIFE</td>
-                                        <td>
-                                            <button class="btn btn-warning btn-sm">Edit</button>
-                                        </td>
-                                    </tr>
-                                    <!-- Additional rows would be populated from database -->
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-            </div>
+    <h1>Gateway Side - Patient Reminders</h1>
+    
+    <div class="card">
+        <div class="card-header">
+            <h5>Patient Information</h5>
+        </div>
+        <div class="card-body">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Status</th>
+                        <th>Patient Name</th>
+                        <th>Phone Number</th>
+                        <th>Appointment Date</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @forelse($appointments as $appointment)
+                    <tr>
+                        <td>
+                            <span class="badge bg-warning">
+                                {{ $appointment->appointment_date >= date('Y-m-d') ? 'Pending' : 'Past' }}
+                            </span>
+                        </td>
+                        <td>{{ $appointment->fullname }}</td>
+                        <td>{{ $appointment->contact }}</td>
+                        <td>{{ date('M d, Y', strtotime($appointment->appointment_date)) }} at {{ date('h:i A', strtotime($appointment->appointment_time)) }}</td>
+                        <td>
+                            <a href="{{ route('admin.gateway.remind', $appointment->id) }}" class="btn btn-warning">
+                                Remind
+                            </a>
+                        </td>
+                    </tr>
+                    @empty
+                    <tr>
+                        <td colspan="5" class="text-center">No appointments found</td>
+                    </tr>
+                    @endforelse
+                </tbody>
+            </table>
         </div>
     </div>
 </div>

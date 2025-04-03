@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
+use App\Models\Appointment;
 
 class Patient extends Model implements HasMedia
 {
@@ -108,5 +109,9 @@ class Patient extends Model implements HasMedia
     public function getFullNameAttribute()
     {
         return $this->first_name . ' ' . $this->last_name;
+    }
+    public function appointments()
+    {
+        return $this->hasMany(Appointment::class, 'user_id');
     }
 }

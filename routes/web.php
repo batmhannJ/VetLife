@@ -83,7 +83,7 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'mi
     //Gateway
     Route::get('gateway', 'GatewayController@index')->name('gateway.index');
     Route::get('gateway/setup', 'GatewayController@setup')->name('gwateway.setup');
-
+    Route::get('gateway/remind/{patient}', 'GatewayController@sendReminder')->name('gateway.remind');
     //Categories
     
     Route::get('/categories', 'App\Http\Controllers\Admin\CategoryController@index');
