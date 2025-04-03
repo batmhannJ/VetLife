@@ -30,16 +30,11 @@ class UpdatePatientRequest extends FormRequest
                 'required',
             ],
             'pin_code'    => [
-                'min:6',
                 'max:15',
-                'required',
                 'unique:patients,pin_code,' . request()->route('patient')->id,
             ],
             'phone'       => [
                 'nullable',
-                'integer',
-                'min:-2147483648',
-                'max:2147483647',
             ],
             'gender'      => [
                 'required',
@@ -52,16 +47,12 @@ class UpdatePatientRequest extends FormRequest
                 'date_format:' . config('panel.date_format'),
             ],
             'office'      => [
-                'required',
             ],
             'job_type'    => [
-                'required',
             ],
             'department'  => [
-                'required',
             ],
             'designation' => [
-                'required',
             ],
         ];
     }

@@ -122,52 +122,52 @@
                     {{ trans('cruds.patient.fields.dob_helper') }}
                 </p>
             </div>
-            <div class="form-group {{ $errors->has('emergency_contact_name') ? 'has-error' : '' }}">
-                <label for="emergency_contact_name">{{ trans('cruds.patient.fields.emergency_contact_name') }}</label>
-                <input type="text" id="emergency_contact_name" name="emergency_contact_name" class="form-control" value="{{ old('emergency_contact_name', isset($patient) ? $patient->emergency_contact_name : '') }}">
-                @if($errors->has('emergency_contact_name'))
+            <div class="form-group {{ $errors->has('pet_name') ? 'has-error' : '' }}">
+                <label for="pet_name">{{ trans('cruds.patient.fields.pet_name') }}</label>
+                <input type="text" id="pet_name" name="pet_name" class="form-control" value="{{ old('pet_name', isset($patient) ? $patient->pet_name : '') }}">
+                @if($errors->has('pet_name'))
                     <p class="help-block">
-                        {{ $errors->first('emergency_contact_name') }}
+                        {{ $errors->first('pet_name') }}
                     </p>
                 @endif
                 <p class="helper-block">
                     {{ trans('cruds.patient.fields.emergency_contact_name_helper') }}
                 </p>
             </div>
-            <div class="form-group {{ $errors->has('emergency_contact_relationship') ? 'has-error' : '' }}">
-                <label for="emergency_contact_relationship">{{ trans('cruds.patient.fields.emergency_contact_relationship') }}</label>
-                <input type="text" id="emergency_contact_relationship" name="emergency_contact_relationship" class="form-control" value="{{ old('emergency_contact_relationship', isset($patient) ? $patient->emergency_contact_relationship : '') }}">
-                @if($errors->has('emergency_contact_relationship'))
+            <div class="form-group {{ $errors->has('pet_type') ? 'has-error' : '' }}">
+                <label for="pet_type">{{ trans('cruds.patient.fields.pet_type') }}</label>
+                <input type="text" id="pet_type" name="pet_type" class="form-control" value="{{ old('pet_type', isset($patient) ? $patient->pet_type : '') }}">
+                @if($errors->has('pet_type'))
                     <p class="help-block">
-                        {{ $errors->first('emergency_contact_relationship') }}
+                        {{ $errors->first('pet_type') }}
                     </p>
                 @endif
                 <p class="helper-block">
-                    {{ trans('cruds.patient.fields.emergency_contact_relationship_helper') }}
+                    {{ trans('cruds.patient.fields.emergency_contact_name_helper') }}
                 </p>
             </div>
-            <div class="form-group {{ $errors->has('emergency_contact_phone') ? 'has-error' : '' }}">
-                <label for="emergency_contact_phone">{{ trans('cruds.patient.fields.emergency_contact_phone') }}</label>
-                <input type="text" id="emergency_contact_phone" name="emergency_contact_phone" class="form-control" value="{{ old('emergency_contact_phone', isset($patient) ? $patient->emergency_contact_phone : '') }}">
-                @if($errors->has('emergency_contact_phone'))
+            <div class="form-group {{ $errors->has('pet_breed') ? 'has-error' : '' }}">
+                <label for="pet_breed">{{ trans('cruds.patient.fields.pet_breed') }}</label>
+                <input type="text" id="pet_breed" name="pet_breed" class="form-control" value="{{ old('pet_breed', isset($patient) ? $patient->pet_breed : '') }}">
+                @if($errors->has('pet_breed'))
                     <p class="help-block">
-                        {{ $errors->first('emergency_contact_phone') }}
+                        {{ $errors->first('pet_breed') }}
                     </p>
                 @endif
                 <p class="helper-block">
-                    {{ trans('cruds.patient.fields.emergency_contact_phone_helper') }}
+                    {{ trans('cruds.patient.fields.emergency_contact_name_helper') }}
                 </p>
             </div>
-            <div class="form-group {{ $errors->has('emergency_contact_address') ? 'has-error' : '' }}">
-                <label for="emergency_contact_address">{{ trans('cruds.patient.fields.emergency_contact_address') }}</label>
-                <input type="text" id="emergency_contact_address" name="emergency_contact_address" class="form-control" value="{{ old('emergency_contact_address', isset($patient) ? $patient->emergency_contact_address : '') }}">
-                @if($errors->has('emergency_contact_address'))
+            <div class="form-group {{ $errors->has('pet_gender') ? 'has-error' : '' }}">
+                <label for="pet_gender">{{ trans('cruds.patient.fields.pet_gender') }}</label>
+                <input type="text" id="pet_gender" name="pet_gender" class="form-control" value="{{ old('pet_gender', isset($patient) ? $patient->pet_gender : '') }}">
+                @if($errors->has('pet_gender'))
                     <p class="help-block">
-                        {{ $errors->first('emergency_contact_address') }}
+                        {{ $errors->first('pet_gender') }}
                     </p>
                 @endif
                 <p class="helper-block">
-                    {{ trans('cruds.patient.fields.emergency_contact_address_helper') }}
+                    {{ trans('cruds.patient.fields.emergency_contact_name_helper') }}
                 </p>
             </div>
             <div class="form-group {{ $errors->has('photo') ? 'has-error' : '' }}">

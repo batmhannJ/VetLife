@@ -1,4 +1,5 @@
-@extends('layouts.app') @section('content')
+@extends('layouts.admin') 
+@section('content')
     <div class="container">
         <h1>Edit Appointment</h1>
 

@@ -9,9 +9,6 @@
                 <!-- Top User Info -->
                 <div class="d-flex justify-content-between mb-4">
                     <h2>Appointments</h2>
-                    <div class="user-info">
-                        <span>{{ Auth::user()->name }}</span>
-                    </div>
                 </div>
                 
                 <!-- Tab Navigation -->

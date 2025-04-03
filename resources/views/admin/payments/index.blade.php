@@ -1,19 +1,23 @@
 @extends('layouts.admin')
 
 @section('content')
-<div class="container-fluid">
-    <div class="row">
-        <!-- Main Content Area -->
-        <div class="col-md-10 ml-auto">
-            <div class="p-3">
+@can('prescription_create')
+    <div style="margin-bottom: 10px;" class="row">
+        <div class="col-lg-12">
+            <a class="btn btn-success" href="{{ route("admin.payments.setup") }}">
+                {{ trans('global.add') }} {{ trans('cruds.payments.title_singular') }}
+            </a>
+        </div>
+    </div>
+@endcan
+<div class="card">
+    <div class="card-header">
+        {{ trans('cruds.payments.title_singular') }} {{ trans('global.list') }}
+    </div>
 
-                <!-- Payments List Table -->
-                <div class="card">
-                    <div class="card-header bg-white">
-                        <h5 class="mb-0">List of Payments</h5>
-                    </div>
-                    <div class="card-body">
-                        <table class="table table-bordered">
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class=" table table-bordered table-striped table-hover datatable datatable-Prescription">
                             <thead>
                                 <tr>
                                     <th>ID</th>
@@ -44,12 +48,7 @@
                             </tbody>
                         </table>
                     </div>
-                </div>
-                <!-- End Payments List -->
-
-            </div>
-        </div>
-    </div>
+</div>
 </div>
 @endsection
 @section('scripts')
