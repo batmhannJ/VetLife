@@ -157,21 +157,22 @@ class HomeController extends Controller
         }
 
         $settings4 = [
-            'chart_title'           => 'Total Test',
+            'chart_title'           => 'Total Payment Received',
             'chart_type'            => 'number_block',
             'report_type'           => 'group_by_date',
-            'model'                 => 'App\\Test',
+            'model'                 => 'App\\Models\\Payment', // Change from 'App\\Test' to 'App\\Payment'
             'group_by_field'        => 'created_at',
             'group_by_period'       => 'day',
-            'aggregate_function'    => 'count',
+            'aggregate_function'    => 'sum', // Change from 'count' to 'sum'
+            'aggregate_field'       => 'amount', // Specify the field to sum
             'filter_field'          => 'created_at',
             'group_by_field_format' => 'Y-m-d H:i:s',
             'column_class'          => 'col-md-3',
             'entries_number'        => '5',
         ];
-
+        
         $settings4['total_number'] = 0;
-
+        
         if (class_exists($settings4['model'])) {
             $settings4['total_number'] = $settings4['model']::when(isset($settings4['filter_field']), function ($query) use ($settings4) {
                 if (isset($settings4['filter_days'])) {
@@ -180,7 +181,7 @@ class HomeController extends Controller
                         '>=',
                         now()->subDays($settings4['filter_days'])->format('Y-m-d')
                     );
-                } else if (isset($settings4['filter_period'])) {
+                } elseif (isset($settings4['filter_period'])) {
                     switch ($settings4['filter_period']) {
                         case 'week':
                             $start  = date('Y-m-d', strtotime('last Monday'));
@@ -192,14 +193,14 @@ class HomeController extends Controller
                             $start  = date('Y') . '-01-01';
                             break;
                     }
-
+        
                     if (isset($start)) {
                         return $query->where($settings4['filter_field'], '>=', $start);
                     }
                 }
-            })
-                ->{$settings4['aggregate_function'] ?? 'count'}($settings4['aggregate_field'] ?? '*');
+            })->sum($settings4['aggregate_field']); // Use sum instead of count
         }
+        
         $settings5 = $this->getSettings5Data();
         $settings6 = $this->getSettings6Data();
         $settings7 = $this->getSettings7Data();
