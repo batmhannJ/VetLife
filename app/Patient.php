@@ -114,4 +114,9 @@ class Patient extends Model implements HasMedia
     {
         return $this->hasMany(Appointment::class, 'user_id');
     }
+    // In your Patient.php model
+public function user()
+{
+    return $this->belongsTo(User::class);
+}
 }

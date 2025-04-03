@@ -113,6 +113,18 @@
                     </div>
 
                     <div class="row">
+                        <!-- Password -->
+                        <div class="col-md-4">
+                            <div class="form-group {{ $errors->has('password') ? 'has-error' : '' }}">
+                                <label for="password">Password*</label>
+                                <input type="password" id="password" name="password" class="form-control" required>
+                                @if($errors->has('password'))
+                                    <p class="help-block text-danger">
+                                        {{ $errors->first('password') }}
+                                    </p>
+                                @endif
+                            </div>
+                        </div>
                         <!-- Zip Code -->
                         <div class="col-md-4">
                             <div class="form-group {{ $errors->has('zip_code') ? 'has-error' : '' }}">
@@ -126,6 +138,10 @@
                             </div>
                         </div>
                         <!-- Address -->
+                       
+                    </div>
+
+                    <div class="row">
                         <div class="col-md-8">
                             <div class="form-group {{ $errors->has('address') ? 'has-error' : '' }}">
                                 <label for="address">{{ trans('cruds.patient.fields.address') }}*</label>

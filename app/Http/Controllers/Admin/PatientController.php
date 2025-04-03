@@ -34,8 +34,19 @@ class PatientController extends Controller
 
     public function store(StorePatientRequest $request)
 {
-    // Create patient with validated data
+    // First create the user with patient role
+    $user = \App\User::create([
+        'name' => $request->input('first_name') . ' ' . $request->input('last_name'),
+        'email' => $request->input('email'),
+        'password' => bcrypt($request->input('password')), // Hash the password
+    ]);
+    
+    // Assign the patient role to the user
+    $user->roles()->sync([2]); // Assuming 3 is the patient role ID
+    
+    // Create patient with validated data and link to user
     $patient = Patient::create([
+        'user_id' => $user->id, // Link patient to user
         'last_name' => $request->input('last_name'),
         'first_name' => $request->input('first_name'),
         'gender' => $request->input('gender'),
@@ -60,7 +71,6 @@ class PatientController extends Controller
 
     return redirect()->route('admin.patients.index')->with('message', 'Patient created successfully');
 }
-
     public function edit(Patient $patient)
     {
         abort_if(Gate::denies('patient_edit'), Response::HTTP_FORBIDDEN, '403 Forbidden');
