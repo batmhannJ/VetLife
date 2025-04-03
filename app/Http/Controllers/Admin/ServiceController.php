@@ -12,22 +12,35 @@ class ServiceController extends Controller
     public function index(Request $request)
 {
     $query = Service::query();
-
-    if ($request->has('animal_type') && !empty($request->animal_type)) {
-        $query->where('animal_type', $request->animal_type);
+    
+    // Filter by animal type if specified
+    if ($request->filled('animal_type')) {
+        $query->where('for', $request->animal_type);
     }
-
-    $services = $query->paginate(10);
-
-    return view('admin.services.index', compact('services'));
-}
+    
+    $services = $query->paginate(5);
+    
+    // Get unique animal types from Categories table
+    $animalTypes = Category::select('animal_type')->distinct()->get();
+    
+    return view('admin.services.index', compact('services', 'animalTypes'));
+}   
 
     
 public function create()
 {
-    return view('admin.services.create');
-}
+    // Get unique animal types from Categories table
+    $animalTypes = Category::select('animal_type')->distinct()->get();
     
+    return view('admin.services.create', compact('animalTypes'));
+}
+
+public function show($id)
+{
+    $service = Service::findOrFail($id);
+    return view('admin.services.show', compact('service'));
+}
+
 public function store(Request $request)
 {
     // Validate Input
@@ -63,17 +76,19 @@ public function store(Request $request)
         $request->validate([
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
-            'category_id' => 'required|exists:categories,id',
             'price' => 'required|numeric|min:0',
-            'for' => 'required|string|max:255',
+            'animal_type' => 'required|string|max:255',
+            'active' => 'required',
+            'updated_at' => ''
         ]);
         
         $service->update([
             'name' => $request->name,
             'description' => $request->description,
-            'category_id' => $request->category_id,
             'price' => $request->price,
-            'for' => $request->for,
+            'animal_type' => $request->animal_type,
+            'active' => $request->active,
+            'updated_at' => now(),
         ]);
         
         return redirect()->route('admin.services.index')

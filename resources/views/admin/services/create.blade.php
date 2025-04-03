@@ -37,9 +37,9 @@
         <div class="mb-3">
             <label for="animal_type" class="form-label">Animal Type:</label>
             <select name="animal_type" id="animal_type" class="form-control" required>
-                <option value="Dog">Dog</option>
-                <option value="Cat">Cat</option>
-                <option value="Bird">Bird</option>
+                @foreach($animalTypes as $type)
+                    <option value="{{ $type->animal_type }}">{{ $type->animal_type }}</option>
+                @endforeach
             </select>
         </div>
 
