@@ -114,4 +114,18 @@ class ScheduleController extends Controller
         
         return response()->json(['days' => $days]);
     }
+
+    public function getAvailableDays()
+{
+    // Assuming you have a schedules table with a 'day' column
+    $schedule = \DB::table('schedules')->first();
+    
+    $days = [];
+    if ($schedule && $schedule->day) {
+        // The day column contains JSON string like: ["Sunday","Tuesday","Wednesday","Thursday","Friday","Saturday"]
+        $days = json_decode($schedule->day, true) ?? [];
+    }
+    
+    return response()->json(['days' => $days]);
+}
 }

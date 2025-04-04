@@ -140,6 +140,7 @@ Route::get('/contact', 'HomeController@contact')->name('contact');
 // Add this outside any route group in web.php
 Route::get('/appointments/counts', [App\Http\Controllers\Patient\AppointmentController::class, 'getAppointmentCounts']);
 Route::get('/schedules/days', [App\Http\Controllers\Admin\ScheduleController::class, 'getDays']);
+Route::get('/schedules/available-days', [App\Http\Controllers\Admin\ScheduleController::class, 'getAvailableDays']);
 
 Route::get('/signup', [App\Http\Controllers\Auth\RegisterController::class, 'showRegistrationForm'])->name('signup');
 Route::post('/register', [App\Http\Controllers\Auth\RegisterController::class, 'register'])->name('signup.submit');

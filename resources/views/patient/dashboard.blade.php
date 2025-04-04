@@ -106,52 +106,85 @@ document.addEventListener('DOMContentLoaded', function() {
     const MAX_APPOINTMENTS_PER_DAY = 20; // Maximum appointments per day - set as constant
     
     let appointmentData = {};
+    let availableDays = []; // Will store the days from the schedule
+    
+    // First fetch the available days from the schedule
+    function fetchAvailableDays() {
+        fetch('/schedules/available-days', {
+            method: 'GET',
+            headers: {
+                'Accept': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest',
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content')
+            },
+            credentials: 'same-origin'
+        })
+        .then(response => {
+            if (!response.ok) {
+                return response.text().then(text => {
+                    console.error('Error response text:', text);
+                    throw new Error(`Server returned ${response.status}: ${text}`);
+                });
+            }
+            return response.json();
+        })
+        .then(data => {
+            console.log('Available days fetched:', data);
+            availableDays = data.days || [];
+            fetchAppointmentCounts();
+        })
+        .catch(error => {
+            console.error('Error fetching available days:', error);
+            // Default to all days if there's an error
+            availableDays = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+            fetchAppointmentCounts();
+        });
+    }
     
     function fetchAppointmentCounts() {
-    // Use the correct URL
-    const url = '/appointments/counts'; // Remove the /patient/ prefix
-    console.log('Fetching appointment counts from URL:', url);
-    
-    fetch(url, {
-        method: 'GET',
-        headers: {
-            'Accept': 'application/json',
-            'X-Requested-With': 'XMLHttpRequest',
-            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content')
-        },
-        credentials: 'same-origin'
-    })
-    .then(response => {
-        console.log('Response status:', response.status);
-        if (!response.ok) {
-            return response.text().then(text => {
-                console.error('Error response text:', text);
-                throw new Error(`Server returned ${response.status}: ${text}`);
-            });
-        }
+        const url = '/appointments/counts';
+        console.log('Fetching appointment counts from URL:', url);
         
-        const contentType = response.headers.get('content-type');
-        if (!contentType || !contentType.includes('application/json')) {
-            return response.text().then(text => {
-                console.error('Invalid content type or non-JSON response:', text.substring(0, 100) + '...');
-                throw new Error('Response is not JSON');
-            });
-        }
-        
-        return response.json();
-    })
-    .then(data => {
-        console.log('Appointment data fetched successfully:', data);
-        appointmentData = data;
-        renderCalendar();
-    })
-    .catch(error => {
-        console.error('Error fetching appointment data:', error);
-        // Continue with empty appointment data rather than failing completely
-        appointmentData = {};
-        renderCalendar(); 
-    });
-}
+        fetch(url, {
+            method: 'GET',
+            headers: {
+                'Accept': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest',
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content')
+            },
+            credentials: 'same-origin'
+        })
+        .then(response => {
+            console.log('Response status:', response.status);
+            if (!response.ok) {
+                return response.text().then(text => {
+                    console.error('Error response text:', text);
+                    throw new Error(`Server returned ${response.status}: ${text}`);
+                });
+            }
+            
+            const contentType = response.headers.get('content-type');
+            if (!contentType || !contentType.includes('application/json')) {
+                return response.text().then(text => {
+                    console.error('Invalid content type or non-JSON response:', text.substring(0, 100) + '...');
+                    throw new Error('Response is not JSON');
+                });
+            }
+            
+            return response.json();
+        })
+        .then(data => {
+            console.log('Appointment data fetched successfully:', data);
+            appointmentData = data;
+            renderCalendar();
+        })
+        .catch(error => {
+            console.error('Error fetching appointment data:', error);
+            // Continue with empty appointment data rather than failing completely
+            appointmentData = {};
+            renderCalendar(); 
+        });
+    }
     
     function renderCalendar() {
         const calendarBody = document.querySelector('#appointmentCalendar tbody');
@@ -177,19 +210,29 @@ document.addEventListener('DOMContentLoaded', function() {
                 } else if (date > daysInMonth) {
                     cell.textContent = '';
                 } else {
+                    const dateObj = new Date(currentYear, currentMonth, date);
+                    const dayName = dateObj.toLocaleString('en-US', { weekday: 'long' });
+                    const isDayAvailable = availableDays.includes(dayName);
+                    
                     const dateStr = `${currentYear}-${String(currentMonth + 1).padStart(2, '0')}-${String(date).padStart(2, '0')}`;
-                    console.log(`Date ${dateStr}, appointments:`, appointmentData[dateStr]);
+                    console.log(`Date ${dateStr}, day: ${dayName}, available: ${isDayAvailable}`);
 
                     const appointmentsForDate = appointmentData[dateStr] || 0;
                     
-                    const availableAppointments = MAX_APPOINTMENTS_PER_DAY - appointmentsForDate;
+                    const availableAppointments = isDayAvailable ? (MAX_APPOINTMENTS_PER_DAY - appointmentsForDate) : 0;
                     
                     const dateDisplay = document.createElement('div');
                     dateDisplay.textContent = date;
                     dateDisplay.className = 'fw-bold';
                     
                     const availabilityDisplay = document.createElement('div');
-                    availabilityDisplay.textContent = `${availableAppointments} available`;
+                    
+                    if (isDayAvailable) {
+                        availabilityDisplay.textContent = `${availableAppointments} available`;
+                    } else {
+                        availabilityDisplay.textContent = 'Not available';
+                    }
+                    
                     availabilityDisplay.className = 'small';
                     
                     const wrapper = document.createElement('div');
@@ -205,7 +248,9 @@ document.addEventListener('DOMContentLoaded', function() {
                         cell.classList.add('bg-info', 'text-white');
                     }
                     
-                    if (availableAppointments <= 0) {
+                    if (!isDayAvailable) {
+                        cell.classList.add('bg-secondary', 'text-white');
+                    } else if (availableAppointments <= 0) {
                         cell.classList.add('bg-danger', 'text-white');
                     } else if (availableAppointments < 10) {
                         cell.classList.add('bg-warning');
@@ -214,9 +259,10 @@ document.addEventListener('DOMContentLoaded', function() {
                     }
                     
                     cell.dataset.date = dateStr;
-                    cell.style.cursor = 'pointer';
-                    cell.addEventListener('click', function() {
-                        if (availableAppointments > 0) {
+                    
+                    if (isDayAvailable && availableAppointments > 0) {
+                        cell.style.cursor = 'pointer';
+                        cell.addEventListener('click', function() {
                             document.getElementById('appointmentDate').value = dateStr;
                             document.getElementById('selectedDateFormatted').value = dateStr;
                             
@@ -224,10 +270,16 @@ document.addEventListener('DOMContentLoaded', function() {
                                 el.classList.remove('selected', 'bg-primary');
                             });
                             this.classList.add('selected', 'bg-primary');
-                        } else {
-                            alert('No appointments available for this date.');
-                        }
-                    });
+                        });
+                    } else {
+                        cell.addEventListener('click', function() {
+                            if (!isDayAvailable) {
+                                alert('No appointments scheduled for this day of the week.');
+                            } else {
+                                alert('No appointments available for this date.');
+                            }
+                        });
+                    }
                     
                     date++;
                 }
@@ -242,6 +294,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         }
     }
+    
     document.getElementById('prevMonth').addEventListener('click', function() {
         currentMonth--;
         if (currentMonth < 0) {
@@ -260,7 +313,8 @@ document.addEventListener('DOMContentLoaded', function() {
         fetchAppointmentCounts();
     });
     
-    fetchAppointmentCounts();
+    // Start by fetching available days first
+    fetchAvailableDays();
     
     const style = document.createElement('style');
     style.textContent = `
@@ -286,6 +340,19 @@ document.addEventListener('DOMContentLoaded', function() {
             event.preventDefault(); 
 
             const selectedDate = document.getElementById('appointmentDate').value;
+            if (!selectedDate) {
+                alert('Please select a date from the calendar.');
+                return;
+            }
+            
+            const dateObj = new Date(selectedDate);
+            const dayName = dateObj.toLocaleString('en-US', { weekday: 'long' });
+            const isDayAvailable = availableDays.includes(dayName);
+            
+            if (!isDayAvailable) {
+                alert('No appointments scheduled for this day of the week.');
+                return;
+            }
             
             const dateStr = selectedDate;
             const appointmentsForDate = appointmentData[dateStr] || 0;
