@@ -95,5 +95,11 @@ public function destroy($id)
     return redirect()->route('admin.appointments.index')->with('success', 'Appointment deleted successfully');
 }
 
+public function getAvailableDays()
+{
+    $schedules = DB::table('schedules')->pluck('day')->toArray(); // Kunin ang lahat ng available days
+    $availableDays = collect($schedules)->flatten()->unique(); // Flatten and remove duplicates
+    return response()->json($availableDays);
+}
 
 }

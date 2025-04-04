@@ -58,9 +58,9 @@
                 <div class="card-body">
                     <h5>Clinic Address</h5>
                     <p>
-                        123 Healthcare Avenue<br>
-                        Medical District, City<br>
-                        Country, 12345
+                    PWJH+3XC, Central Luzon State University, <br>
+                    Science City of Muñoz, <br>
+                    Nueva Ecija, Philippines
                     </p>
 
                     <h5>Phone</h5>
@@ -71,8 +71,8 @@
 
                     <h5>Email</h5>
                     <p>
-                        <i class="fas fa-envelope"></i> info@yourclinic.com<br>
-                        <i class="fas fa-envelope"></i> support@yourclinic.com
+                        <i class="fas fa-envelope"></i> info@clsu-vetlife.com<br>
+                        <i class="fas fa-envelope"></i> support@clsu-vetlife.com
                     </p>
 
                     <h5>Hours of Operation</h5>

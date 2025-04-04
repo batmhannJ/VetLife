@@ -1,6 +1,6 @@
 @extends('layouts.app')
 @section('content')
-<div class="login-box">
+<div class="register-box">
     <div class="login-logo">
         <div class="login-logo">
             <a href="{{ route('admin.home') }}">
@@ -10,59 +10,62 @@
         </div>
     </div>
     <div class="card">
-        <div class="card-body login-card-body">
+        <div class="card-body register-card-body">
             <p class="login-box-msg">
-                Register New Account
+                Register a new account
             </p>
 
-            @if(session()->has('message'))
-                <p class="alert alert-info">
-                    {{ session()->get('message') }}
-                </p>
+            @if($errors->count() > 0)
+                <div class="alert alert-danger">
+                    <ul class="list-unstyled">
+                        @foreach($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
             @endif
 
-            <form action="{{ route('signup.submit') }}" method="POST">
+            <form method="POST" action="{{ route('register') }}">
                 @csrf
-
+                
                 <div class="form-group">
-                    <input id="name" type="text" class="form-control{{ $errors->has('name') ? ' is-invalid' : '' }}" required autocomplete="name" autofocus placeholder="Full Name" name="name" value="{{ old('name', null) }}">
-
+                    <input id="name" type="text" class="form-control{{ $errors->has('name') ? ' is-invalid' : '' }}" name="name" value="{{ old('name') }}" required autofocus placeholder="Full name">
                     @if($errors->has('name'))
-                        <div class="invalid-feedback">
-                            {{ $errors->first('name') }}
-                        </div>
+                        <span class="invalid-feedback" role="alert">
+                            <strong>{{ $errors->first('name') }}</strong>
+                        </span>
                     @endif
                 </div>
-
+                
                 <div class="form-group">
-                    <input id="email" type="email" class="form-control{{ $errors->has('email') ? ' is-invalid' : '' }}" required autocomplete="email" placeholder="Email Address" name="email" value="{{ old('email', null) }}">
-
+                    <input id="email" type="email" class="form-control{{ $errors->has('email') ? ' is-invalid' : '' }}" name="email" value="{{ old('email') }}" required placeholder="Email">
                     @if($errors->has('email'))
-                        <div class="invalid-feedback">
-                            {{ $errors->first('email') }}
-                        </div>
+                        <span class="invalid-feedback" role="alert">
+                            <strong>{{ $errors->first('email') }}</strong>
+                        </span>
                     @endif
                 </div>
-
+                
                 <div class="form-group">
                     <input id="password" type="password" class="form-control{{ $errors->has('password') ? ' is-invalid' : '' }}" name="password" required placeholder="Password">
-
                     @if($errors->has('password'))
-                        <div class="invalid-feedback">
-                            {{ $errors->first('password') }}
-                        </div>
+                        <span class="invalid-feedback" role="alert">
+                            <strong>{{ $errors->first('password') }}</strong>
+                        </span>
                     @endif
                 </div>
-
+                
                 <div class="form-group">
-                    <input id="password-confirm" type="password" class="form-control" name="password_confirmation" required placeholder="Confirm Password">
+                    <input id="password-confirm" type="password" class="form-control" name="password_confirmation" required placeholder="Confirm password">
                 </div>
-
+                
                 <div class="row">
                     <div class="col-8">
                         <div class="icheck-primary">
                             <input type="checkbox" name="terms" id="terms" required>
-                            <label for="terms">I agree to the terms</label>
+                            <label for="terms">
+                                I agree to the <a href="#">terms</a>
+                            </label>
                         </div>
                     </div>
                     <!-- /.col -->
@@ -75,13 +78,13 @@
                 </div>
             </form>
 
-            <p class="mb-1 mt-3">
-                <a href="{{ route('login') }}" class="text-center">
+            <p class="mt-3 mb-1">
+                <a href="{{ route('login') }}">
                     Already have an account? Login
                 </a>
             </p>
         </div>
-        <!-- /.login-card-body -->
+        <!-- /.register-card-body -->
     </div>
 </div>
 @endsection

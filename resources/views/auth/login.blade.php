@@ -71,7 +71,9 @@
                 </p>
             @endif
             <p class="mb-1">
-
+                <a href="{{ route('signup') }}" class="text-center">
+                    Don't have an account? Sign up
+                </a>
             </p>
         </div>
         <!-- /.login-card-body -->

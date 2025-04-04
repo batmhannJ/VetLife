@@ -59,10 +59,9 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'mi
         Route::get('create', 'ScheduleController@create')->name('create');
         Route::post('/', 'ScheduleController@store')->name('store');
     });
-
+    Route::get('/available-days', [ScheduleController::class, 'getAvailableDays']);
     Route::post('schedules/settings', [ScheduleController::class, 'saveSettings'])->name('schedules.saveSettings');
 
-    // Reports
     Route::delete('reports/destroy', 'ReportController@massDestroy')->name('reports.massDestroy');
     Route::resource('reports', 'ReportController');
     
@@ -140,3 +139,7 @@ Route::get('/services', 'HomeController@services')->name('services');
 Route::get('/contact', 'HomeController@contact')->name('contact');
 // Add this outside any route group in web.php
 Route::get('/appointments/counts', [App\Http\Controllers\Patient\AppointmentController::class, 'getAppointmentCounts']);
+Route::get('/schedules/days', [App\Http\Controllers\Admin\ScheduleController::class, 'getDays']);
+
+Route::get('/signup', [App\Http\Controllers\Auth\RegisterController::class, 'showRegistrationForm'])->name('signup');
+Route::post('/register', [App\Http\Controllers\Auth\RegisterController::class, 'register'])->name('signup.submit');

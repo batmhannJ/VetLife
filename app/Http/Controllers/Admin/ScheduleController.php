@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\Schedule; 
 use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
-
+use Illuminate\Support\Facades\DB;
 class ScheduleController extends Controller
 {
     /**
@@ -107,4 +107,11 @@ class ScheduleController extends Controller
     }
 }
 
+    public function getDays()
+    {
+        // Fetch unique days from your schedules table
+        $days = DB::table('schedules')->select('day')->distinct()->pluck('day');
+        
+        return response()->json(['days' => $days]);
+    }
 }
